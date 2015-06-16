@@ -106,16 +106,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Formatting.feature</DependentUpon>
     </Compile>
-    <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="calling_api.cs" />
     <Compile Include="pipelineTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\GitHub\octokit.net\Octokit\Octokit.csproj">
-      <Project>{08dd4305-7787-4823-a53f-4d0f725a07f3}</Project>
-      <Name>Octokit</Name>
-    </ProjectReference>
     <ProjectReference Include="..\api.louisukiri.com\api.louisukiri.com.csproj">
       <Project>{eceeca7b-2647-4b3a-831c-4ba3b95e6539}</Project>
       <Name>api.louisukiri.com</Name>

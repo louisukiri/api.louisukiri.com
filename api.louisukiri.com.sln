@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api.louisukiri.com", "api.l
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api.louisukiri.com.Tests", "api.louisukiri.com.Tests\api.louisukiri.com.Tests.csproj", "{B86649BE-691B-477B-B4D2-ADDFFE403F22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octokit", "..\..\..\GitHub\octokit.net\Octokit\Octokit.csproj", "{08DD4305-7787-4823-A53F-4D0F725A07F3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{CEC9D451-6291-4EDF-971A-D398144FBF96}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\GitHub\octokit.net\.gitattributes = ..\..\..\GitHub\octokit.net\.gitattributes
@@ -23,14 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{CEC9D451
 		..\..\..\GitHub\octokit.net\Octokit.ruleset = ..\..\..\GitHub\octokit.net\Octokit.ruleset
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octokit-NetCore45", "..\..\..\GitHub\octokit.net\Octokit\Octokit-NetCore45.csproj", "{C8BC13B6-3FA3-4716-827D-E7706F976FE1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octokit.Reactive", "..\..\..\GitHub\octokit.net\Octokit.Reactive\Octokit.Reactive.csproj", "{674B69B8-0780-4D54-AE2B-C15821FA51CB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octokit-Mono", "..\..\..\GitHub\octokit.net\Octokit\Octokit-Mono.csproj", "{49EF16A2-5ED1-480F-80A1-D1D05D6C1BE4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octokit-Portable", "..\..\..\GitHub\octokit.net\Octokit\Octokit-Portable.csproj", "{DDB20481-E17D-4E0A-B2C0-FFFF78D4ED71}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DB068FD2-F54C-48EB-A6FD-1AC9EA3F8F57}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NodeRest", "NodeRest", "{26AA7FC1-A09F-4F4C-B640-19DF26149133}"
@@ -41,12 +31,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodeJsGithub", "NodeJsGithub\NodeJsGithub.csproj", "{C7570751-68A4-4E68-BC07-7515FFFF0197}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cicdDomain", "cicdDomain\cicdDomain.csproj", "{714A52B6-8AE1-4868-B5FF-16B355A0C75A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octokit.Tests", "..\..\..\GitHub\octokit.net\Octokit.Tests\Octokit.Tests.csproj", "{149448D4-C2F2-4DF9-86BD-03E3272F093B}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "octokitTests", "octokitTests", "{D8BC882F-FC5A-43D0-A25D-CB04744E5005}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octokit.Tests.Integration", "..\..\..\GitHub\octokit.net\Octokit.Tests.Integration\Octokit.Tests.Integration.csproj", "{01687D54-1D87-4562-A721-C57F1C94052C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,26 +46,6 @@ Global
 		{B86649BE-691B-477B-B4D2-ADDFFE403F22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B86649BE-691B-477B-B4D2-ADDFFE403F22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B86649BE-691B-477B-B4D2-ADDFFE403F22}.Release|Any CPU.Build.0 = Release|Any CPU
-		{08DD4305-7787-4823-A53F-4D0F725A07F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{08DD4305-7787-4823-A53F-4D0F725A07F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{08DD4305-7787-4823-A53F-4D0F725A07F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{08DD4305-7787-4823-A53F-4D0F725A07F3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8BC13B6-3FA3-4716-827D-E7706F976FE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8BC13B6-3FA3-4716-827D-E7706F976FE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8BC13B6-3FA3-4716-827D-E7706F976FE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8BC13B6-3FA3-4716-827D-E7706F976FE1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{674B69B8-0780-4D54-AE2B-C15821FA51CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{674B69B8-0780-4D54-AE2B-C15821FA51CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{674B69B8-0780-4D54-AE2B-C15821FA51CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{674B69B8-0780-4D54-AE2B-C15821FA51CB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{49EF16A2-5ED1-480F-80A1-D1D05D6C1BE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{49EF16A2-5ED1-480F-80A1-D1D05D6C1BE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{49EF16A2-5ED1-480F-80A1-D1D05D6C1BE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{49EF16A2-5ED1-480F-80A1-D1D05D6C1BE4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DDB20481-E17D-4E0A-B2C0-FFFF78D4ED71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DDB20481-E17D-4E0A-B2C0-FFFF78D4ED71}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DDB20481-E17D-4E0A-B2C0-FFFF78D4ED71}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DDB20481-E17D-4E0A-B2C0-FFFF78D4ED71}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C7570751-68A4-4E68-BC07-7515FFFF0197}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C7570751-68A4-4E68-BC07-7515FFFF0197}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7570751-68A4-4E68-BC07-7515FFFF0197}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -90,20 +54,8 @@ Global
 		{714A52B6-8AE1-4868-B5FF-16B355A0C75A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{714A52B6-8AE1-4868-B5FF-16B355A0C75A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{714A52B6-8AE1-4868-B5FF-16B355A0C75A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{149448D4-C2F2-4DF9-86BD-03E3272F093B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{149448D4-C2F2-4DF9-86BD-03E3272F093B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{149448D4-C2F2-4DF9-86BD-03E3272F093B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{149448D4-C2F2-4DF9-86BD-03E3272F093B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01687D54-1D87-4562-A721-C57F1C94052C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01687D54-1D87-4562-A721-C57F1C94052C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01687D54-1D87-4562-A721-C57F1C94052C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01687D54-1D87-4562-A721-C57F1C94052C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{149448D4-C2F2-4DF9-86BD-03E3272F093B} = {D8BC882F-FC5A-43D0-A25D-CB04744E5005}
-		{01687D54-1D87-4562-A721-C57F1C94052C} = {D8BC882F-FC5A-43D0-A25D-CB04744E5005}
 	EndGlobalSection
 EndGlobal

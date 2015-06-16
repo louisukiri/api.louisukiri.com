@@ -1,5 +1,4 @@
 ﻿using cicdDomain.cicd.domain.entity;
-using Octokit;
 using System;
 using System.Collections.Generic;
 using System.IO;
