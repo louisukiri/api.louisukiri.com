@@ -1,31 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api.louisukiri.com", "api.louisukiri.com\api.louisukiri.com.csproj", "{ECEECA7B-2647-4B3A-831C-4BA3B95E6539}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api.louisukiri.com.Tests", "api.louisukiri.com.Tests\api.louisukiri.com.Tests.csproj", "{B86649BE-691B-477B-B4D2-ADDFFE403F22}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{CEC9D451-6291-4EDF-971A-D398144FBF96}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\GitHub\octokit.net\.gitattributes = ..\..\..\GitHub\octokit.net\.gitattributes
-		..\..\..\GitHub\octokit.net\.gitignore = ..\..\..\GitHub\octokit.net\.gitignore
-		..\..\..\GitHub\octokit.net\appveyor.yml = ..\..\..\GitHub\octokit.net\appveyor.yml
-		..\..\..\GitHub\octokit.net\build.cmd = ..\..\..\GitHub\octokit.net\build.cmd
-		..\..\..\GitHub\octokit.net\build.fsx = ..\..\..\GitHub\octokit.net\build.fsx
-		..\..\..\GitHub\octokit.net\script\cibuild.ps1 = ..\..\..\GitHub\octokit.net\script\cibuild.ps1
-		..\..\..\GitHub\octokit.net\CustomDictionary.xml = ..\..\..\GitHub\octokit.net\CustomDictionary.xml
-		..\..\..\GitHub\octokit.net\octokit.nuspec = ..\..\..\GitHub\octokit.net\octokit.nuspec
-		..\..\..\GitHub\octokit.net\Octokit.Reactive.nuspec = ..\..\..\GitHub\octokit.net\Octokit.Reactive.nuspec
-		..\..\..\GitHub\octokit.net\Octokit.ruleset = ..\..\..\GitHub\octokit.net\Octokit.ruleset
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DB068FD2-F54C-48EB-A6FD-1AC9EA3F8F57}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NodeRest", "NodeRest", "{26AA7FC1-A09F-4F4C-B640-19DF26149133}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\..\Desktop\NodeJs\app.ts = ..\..\..\..\Desktop\NodeJs\app.ts
+		..\..\Desktop\NodeJs\app.ts = ..\..\Desktop\NodeJs\app.ts
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodeJsGithub", "NodeJsGithub\NodeJsGithub.csproj", "{C7570751-68A4-4E68-BC07-7515FFFF0197}"
