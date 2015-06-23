@@ -17,6 +17,8 @@ namespace api.louisukiri.com.Tests
     public void setup()
     {
       buildServer = new Mock<IBuildServer>();
+      buildServer.Setup(z => z.buildJob(It.IsAny<string>()));
+      sut = new CICDService(buildServer.Object);
     }
     [Test]
     public void givenIdentifierCallsBuildServerService()
@@ -24,7 +26,7 @@ namespace api.louisukiri.com.Tests
       string name = testInfrastructure.random;
       sut.send(name);
 
-      
+      buildServer.Verify(z=> z.buildJob(name));
     }
   }
 }

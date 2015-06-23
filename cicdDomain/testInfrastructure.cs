@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace cicdDomain
 {
-  class testInfrastructure
+  public class testInfrastructure
   {
+    public static string random
+    {
+      get { return Guid.NewGuid().ToString(); }
+    }
   }
 }
