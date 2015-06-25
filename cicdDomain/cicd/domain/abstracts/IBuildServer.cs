@@ -8,6 +8,7 @@ namespace cicd.domain.cicd.domain.abstracts
 {
     public interface IBuildServer
     {
+      string BaseAddress { get; set; }
       void buildJob(string name);
     }
 }
