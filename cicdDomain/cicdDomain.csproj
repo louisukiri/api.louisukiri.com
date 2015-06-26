@@ -51,6 +51,8 @@
   <ItemGroup>
     <Compile Include="cicd\domain\abstracts\IBuildServer.cs" />
     <Compile Include="cicd\domain\abstracts\IBuildServerRest.cs" />
+    <Compile Include="cicd\domain\abstracts\IBuildService.cs" />
+    <Compile Include="cicd\domain\abstracts\IJobRepo.cs" />
     <Compile Include="cicd\domain\entity\BuildServer.cs" />
     <Compile Include="cicd\domain\entity\pushactivity.cs" />
     <Compile Include="cicd\domain\service\CICDService.cs" />

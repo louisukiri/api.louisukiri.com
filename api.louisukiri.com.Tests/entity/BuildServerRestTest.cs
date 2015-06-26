@@ -13,7 +13,7 @@ namespace api.louisukiri.com.Tests.entity
     [TestFixtureSetUp]
     public void setup()
     {
-      sut = new JenkinsBuildServer("http://louisjenkins.dc1.corp.gd:8080/");
+      //sut = new JenkinsBuildServer("http://louisjenkins.dc1.corp.gd:8080/");
     }
     [Test]
     public void TriggerRestConnectionMakesReturnsNone201ReturnException()

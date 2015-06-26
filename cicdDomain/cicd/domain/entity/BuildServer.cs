@@ -11,6 +11,7 @@ namespace cicdDomain.cicd.domain.entity
 {
   public class JenkinsBuildServer: IBuildServer, IBuildServerRest
   {
+    public string BaseAddress { get; set; }
     public JenkinsBuildServer()
     {
       BuildServerRest = this;
