@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using cicd.domain.cicd.domain.abstracts;
 using cicdDomain.cicd.domain.abstracts;
+using cicdDomain.cicd.infrastructure.dtos;
 
 namespace cicdDomain.cicd.domain.service
 {
@@ -29,6 +30,9 @@ namespace cicdDomain.cicd.domain.service
     {
       buildServer.buildJob(name);
     }
-
+    public TriggerResult trigger()
+    {
+        return new TriggerResult { wasSuccessful=true };
+    }
   }
 }
