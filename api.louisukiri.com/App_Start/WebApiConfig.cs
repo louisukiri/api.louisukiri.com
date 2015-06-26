@@ -17,13 +17,12 @@ namespace api.louisukiri.com
                 new DefaultContentNegotiator(excludeMatchOnTypeOnly: true));
 
 
-            // Web API routes
+            //// Web API routes
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
+                routeTemplate: "api/{controller}/{action}"
             );
         }
     }

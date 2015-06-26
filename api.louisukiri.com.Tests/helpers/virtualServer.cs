@@ -25,6 +25,7 @@ namespace api.louisukiri.com.Tests.helpers
            _config = new HttpConfiguration();
             _config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
             //setup configuration
+
             WebApiConfig.Register(_config);
 
             //setup server 

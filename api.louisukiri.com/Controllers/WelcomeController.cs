@@ -10,48 +10,23 @@ using System.Web.Http;
 
 namespace api.louisukiri.com.Controllers
 {
-    public class WelcomeController : ApiController
+    public class TriggersController : ApiController
     {
-        // GET: api/Welcome
-        public IEnumerable<string> Get()
+        [HttpGet]
+        public string test()
         {
-            return new string[] { "value1", "value2" };
+            return "ok jim";
         }
-
-        // GET: api/Welcome/5
-        public string Get(int id)
+        [Route("api/v1/push"), HttpPost]
+        public pushactivity push([FromBody]pushactivity value)
         {
-            //File.AppendAllText(HostingEnvironment.MapPath("~/call.txt"), DateTime.Now.ToString());
-            using (StreamWriter strw = File.AppendText(HostingEnvironment.MapPath("~/call.txt")))
-            { 
-                strw.WriteLineAsync(DateTime.Now.ToString()); 
+            if(value == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
             }
-            return "value";
-        }
-
-        // POST: api/Welcome
-        public pushactivity Post([FromBody]pushactivity value)
-        {
-            
-            //File.AppendAllText(HostingEnvironment.MapPath("~/call.txt"), DateTime.Now.ToString());
-            
-            //using (StreamWriter strw = File.AppendText(HostingEnvironment.MapPath("~/call.txt")))
-            //{
-            //    strw.WriteLineAsync(Request.Content.ToString());
-            //    strw.WriteLineAsync(DateTime.Now.ToString() + " doing this");
-            //}
             string me = Request.Content.ReadAsStringAsync().Result;
             return value;
         }
 
-        // PUT: api/Welcome/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Welcome/5
-        public void Delete(int id)
-        {
-        }
     }
 }
