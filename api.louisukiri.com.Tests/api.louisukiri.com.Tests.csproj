@@ -105,8 +105,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\SwaggerConfig.cs" />
-    <Compile Include="entity\jenkinsBuildServerTest.cs" />
+    <Compile Include="entity\jenkinsBuildServiceTest.cs" />
     <Compile Include="entity\BuildServerRestTest.cs" />
+    <Compile Include="entity\JobTest.cs" />
     <Compile Include="helpers\virtualServer.cs" />
     <Compile Include="integratedTests\Formatting.feature.cs">
       <AutoGen>True</AutoGen>

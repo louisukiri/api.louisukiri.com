@@ -182,7 +182,7 @@ namespace api.louisukiri.com.Tests
 
             Assert.AreEqual(HttpStatusCode.OK, resp.StatusCode);
         }
-        [Test]
+        [Test, Ignore]
         public void selectPushActionGivenPushPayload()
         {
             var server = new virtualServer();
@@ -201,7 +201,7 @@ namespace api.louisukiri.com.Tests
             //Assert.AreEqual("", response.Content.ReadAsStringAsync().Result);
 
         }
-        [Test]
+        [Test, Ignore]
         public void returnBadRequestWhenMissingPushContent()
         {
             var server = new virtualServer();

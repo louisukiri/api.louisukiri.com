@@ -1,10 +1,12 @@
 ﻿
 
 using cicdDomain.cicd.domain.abstracts;
+using cicdDomain.cicd.domain.entity;
 using cicdDomain.cicd.domain.service;
-using cicdDomain.cicd.infrastructure.dtos;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 namespace api.louisukiri.com.Tests.service
 {
     [TestFixture]
@@ -32,28 +34,70 @@ namespace api.louisukiri.com.Tests.service
             Assert.IsNotNull(sut.BuildService);
         }
         [Test]
-        public void WhenTriggerSuccessfulReturnTriggerResult()
+        public void WhenRepoReturnsJobWithExceptionReturnJobWithException()
         {
-            CICDService sut = getCICDService();
-            TriggerResult result = sut.trigger();
+            string id = "testID";
+            _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
+                .Returns(getJob(false));
 
-            Assert.IsTrue(result.wasSuccessful);
+            CICDService sut = getCICDService();
+            var res = sut.trigger();
+
+            Assert.IsFalse(res.LastExecution.isSuccessful);
+            Assert.IsTrue(res.LastExecution.Messages.Count > 0);
         }
         [Test]
-        public void WhenBuildFailsReturnUnsuccessfulTriggerResult()
+        public void WhenRepoReturnsJobWithExceptionDontBuild()
         {
-            CICDService sut = getCICDService();
-            TriggerResult result = sut.trigger();
+            string id = "testID";
+            _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
+                .Returns(getJob(false));
+            _buildService.Setup(z => z.build(It.IsAny<Job>()));
 
-            Assert.IsTrue(result.wasSuccessful);
+            CICDService sut = getCICDService();
+            var res = sut.trigger();
+
+            _buildService.Verify(z => z.build(It.IsAny<Job>()), Times.Never());
         }
-        [Test]
-        public void WhenBuildFailsReturnTriggerResultMessages()
-        {
-            CICDService sut = getCICDService();
-            TriggerResult result = sut.trigger();
+        //[Test]
+        //public void WhenTriggerSuccessfulReturnTriggerResult()
+        //{
+        //    _buildService.Setup(z => z.build())
+        //        .Returns(getJob());
 
-            Assert.IsTrue(result.wasSuccessful);
+        //    CICDService sut = getCICDService();
+        //    Job result = sut.trigger();
+
+        //    Assert.IsTrue(result.LastExecution.isSuccessful);
+        //}
+        //[Test]
+        //public void WhenBuildFailsReturnUnsuccessfulJob()
+        //{
+        //    _buildService.Setup(z => z.build())
+        //        .Returns(getJob(false));
+
+        //    CICDService sut = getCICDService();
+        //    Job result = sut.trigger();
+
+        //    Assert.IsFalse(result.LastExecution.isSuccessful);
+        //}
+        private Job FailedJob()
+        {
+            return getJob(false);
+        }
+        private Job getJob(bool successful=true)
+        {
+            List<string> messages = new List<string>();
+            if (!successful)
+            {
+                messages.Add("Error");
+            }
+            return new Job
+                {
+                    Executions = new List<Execution> { 
+                        new Execution(successful, DateTime.Now, messages)
+                    }
+                };
         }
         private CICDService getCICDService()
         {

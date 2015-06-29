@@ -9,28 +9,19 @@ using System.Threading.Tasks;
 
 namespace cicdDomain.cicd.domain.entity
 {
-  public class JenkinsBuildServer: IBuildServer, IBuildServerRest
+  public class JenkinsBuildService: IBuildService
   {
     public string BaseAddress { get; set; }
-    public JenkinsBuildServer()
+    public JenkinsBuildService()
     {
-      BuildServerRest = this;
     }
-    public JenkinsBuildServer(IBuildServerRest buildServerRest)
-    {
-      BuildServerRest = buildServerRest;
-    }
-    public void buildJob(string name)
-    {
-      BuildServerRest.trigger(name);
-    }
-    public IBuildServerRest BuildServerRest { get; private set; }
 
-    public HttpResponseMessage trigger(string name)
+    public virtual HttpResponseMessage trigger(string name, string uri, string relativePath )
     {
       using (var client = new HttpClient())
       {
-        client.BaseAddress = new Uri("http://louisjenkins.dc1.corp.gd:8080/");
+        //"http://louisjenkins.dc1.corp.gd:8080/"
+        client.BaseAddress = new Uri(uri);
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
 
@@ -38,10 +29,27 @@ namespace cicdDomain.cicd.domain.entity
         keyvalues.Add(new KeyValuePair<string, string>("test", name));
 
         var content = new FormUrlEncodedContent(keyvalues);
-
-        return client.PostAsync("job/CI-Api/buildWithParameters", content).Result;
+        //job/CI-Api/buildWithParameters
+        return client.PostAsync(relativePath, content).Result;
 
       }
+    }
+
+    public Job build(Job job)
+    {
+        HttpResponseMessage a = null;
+        try
+        {
+            a = trigger(job.name, job.uri, job.path);
+            job.AddRun(a.IsSuccessStatusCode, new List<string> { a.StatusCode.ToString() });
+        }
+        catch(Exception ex)
+        {
+            job.AddRun(false, new List<string> { ex.Message });
+        }
+
+        
+        return job;
     }
   }
 }

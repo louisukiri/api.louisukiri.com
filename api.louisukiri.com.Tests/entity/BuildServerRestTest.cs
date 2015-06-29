@@ -15,7 +15,7 @@ namespace api.louisukiri.com.Tests.entity
     {
       //sut = new JenkinsBuildServer("http://louisjenkins.dc1.corp.gd:8080/");
     }
-    [Test]
+    [Test, Ignore]
     public void TriggerRestConnectionMakesReturnsNone201ReturnException()
     {
       var a = sut.trigger("louis 22");

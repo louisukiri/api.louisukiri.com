@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using cicd.domain.cicd.domain.abstracts;
 using cicdDomain.cicd.domain.abstracts;
-using cicdDomain.cicd.infrastructure.dtos;
+using cicdDomain.cicd.domain.entity;
 
 namespace cicdDomain.cicd.domain.service
 {
@@ -30,9 +30,14 @@ namespace cicdDomain.cicd.domain.service
     {
       buildServer.buildJob(name);
     }
-    public TriggerResult trigger()
+    public Job trigger()
     {
-        return new TriggerResult { wasSuccessful=true };
+        Job job = JobRepo.getJobBy("testId");
+        if(!job.SuccesffullyRan)
+        {
+            return job;
+        }
+        return BuildService.build(job);
     }
   }
 }
