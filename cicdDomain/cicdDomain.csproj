@@ -51,7 +51,10 @@
   <ItemGroup>
     <Compile Include="cicd\domain\abstracts\IBuildServer.cs" />
     <Compile Include="cicd\domain\abstracts\IBuildServerRest.cs" />
-    <Compile Include="cicd\domain\entity\BuildServer.cs" />
+    <Compile Include="cicd\domain\abstracts\IBuildService.cs" />
+    <Compile Include="cicd\domain\abstracts\IJobRepo.cs" />
+    <Compile Include="cicd\domain\entity\BuildService.cs" />
+    <Compile Include="cicd\domain\entity\Job.cs" />
     <Compile Include="cicd\domain\entity\pushactivity.cs" />
     <Compile Include="cicd\domain\service\CICDService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -59,6 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="cicd\infrastructure\dtos\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
