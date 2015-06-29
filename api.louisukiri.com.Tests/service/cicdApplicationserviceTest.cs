@@ -1,8 +1,11 @@
 ﻿
 
+using cicdDomain;
 using cicdDomain.cicd.domain.abstracts;
 using cicdDomain.cicd.domain.entity;
 using cicdDomain.cicd.domain.service;
+using cicdDomain.cicd.infrastructure;
+using cicdDomain.cicd.infrastructure.dtos;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -14,12 +17,19 @@ namespace api.louisukiri.com.Tests.service
     {
         Mock<IJobRepo> _jobRepo;
         Mock<IBuildService> _buildService;
+        Mock<IRequestFactory> _requestFactory;
 
+      public DomainRequest request;
         [TestFixtureSetUp]
         public void setup()
         {
             _jobRepo = new Mock<IJobRepo>();
             _buildService = new Mock<IBuildService>();
+          _requestFactory = new Mock<IRequestFactory>();
+          request = new DomainRequest()
+          {
+            jobId = "test"
+          };
         }
         [Test]
         public void CicdApplicationServiceRequiresJobRepo()
@@ -30,78 +40,121 @@ namespace api.louisukiri.com.Tests.service
         [Test]
         public void CicdApplicationServiceRequiresBuildService()
         {
-            CICDService sut = getCICDService();
-            Assert.IsNotNull(sut.BuildService);
+          CICDService sut = getCICDService();
+          Assert.IsNotNull(sut.BuildService);
+        }
+        [Test]
+        public void CicdApplicationServiceRequiresRequestFactory()
+        {
+          CICDService sut = getCICDService();
+          Assert.IsNotNull(sut.RequestFactory);
         }
         [Test]
         public void WhenRepoReturnsJobWithExceptionReturnJobWithException()
         {
-            string id = "testID";
-            _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
-                .Returns(getJob(false));
+          string id = "testID";
+          _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
+              .Returns(testInfrastructure.getJob(false));
 
-            CICDService sut = getCICDService();
-            var res = sut.trigger();
+          CICDService sut = getCICDService();
+          var res = sut.trigger(request);
 
-            Assert.IsFalse(res.LastExecution.isSuccessful);
-            Assert.IsTrue(res.LastExecution.Messages.Count > 0);
+          Assert.IsFalse(res.LastExecution.isSuccessful);
+          Assert.IsTrue(res.LastExecution.Messages.Count > 0);
+        }
+        [Test]
+        public void WhenRequestIsNullReturnJobWithException()
+        {
+          string id = "testID";
+          _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
+              .Returns(testInfrastructure.getJob(false));
+
+          CICDService sut = getCICDService();
+          var res = sut.trigger(null);
+
+          Assert.IsFalse(res.LastExecution.isSuccessful);
+          Assert.IsTrue(res.LastExecution.Messages.Count > 0);
         }
         [Test]
         public void WhenRepoReturnsJobWithExceptionDontBuild()
         {
             string id = "testID";
             _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
-                .Returns(getJob(false));
+                .Returns(testInfrastructure.getJob(false));
             _buildService.Setup(z => z.build(It.IsAny<Job>()));
 
             CICDService sut = getCICDService();
-            var res = sut.trigger();
+            var res = sut.trigger(request);
 
             _buildService.Verify(z => z.build(It.IsAny<Job>()), Times.Never());
         }
-        //[Test]
-        //public void WhenTriggerSuccessfulReturnTriggerResult()
-        //{
-        //    _buildService.Setup(z => z.build())
-        //        .Returns(getJob());
-
-        //    CICDService sut = getCICDService();
-        //    Job result = sut.trigger();
-
-        //    Assert.IsTrue(result.LastExecution.isSuccessful);
-        //}
-        //[Test]
-        //public void WhenBuildFailsReturnUnsuccessfulJob()
-        //{
-        //    _buildService.Setup(z => z.build())
-        //        .Returns(getJob(false));
-
-        //    CICDService sut = getCICDService();
-        //    Job result = sut.trigger();
-
-        //    Assert.IsFalse(result.LastExecution.isSuccessful);
-        //}
-        private Job FailedJob()
+        [Test, Ignore]
+        public void WhenCallingRunReturnInvalidResultIfPayloadStringNullOrEmpty()
         {
-            return getJob(false);
+          CICDService sut = getCICDService();
+          RequestPayload rqPayload = new RequestPayload(RequestTrigger.Branch
+            , testInfrastructure.GitHubPushContent);
+
+          IDomainResult ppayload = sut.run(rqPayload);
+
+          Assert.IsTrue((ppayload as FailedRequest) != null);
         }
-        private Job getJob(bool successful=true)
+        [Test]
+        public void CallingRunAndRequestPayloadIsNullReturnNullResult()
         {
-            List<string> messages = new List<string>();
-            if (!successful)
-            {
-                messages.Add("Error");
-            }
-            return new Job
-                {
-                    Executions = new List<Execution> { 
-                        new Execution(successful, DateTime.Now, messages)
-                    }
-                };
+          CICDService sut = getCICDService();
+          var res = sut.run(null);
+          Assert.IsInstanceOf<FailedRequest>(res);
+        }
+        [Test]
+        public void CallingRunAndRequestObjectIsNullReturnFailedResult()
+        {
+          CICDService sut = getCICDService();
+          DomainRequest validRes = null;
+          _requestFactory.Setup(z => z.getRequestFrom(It.IsAny<RequestPayload>()))
+            .Returns(validRes);
+          var res = sut.run(new RequestPayload(RequestTrigger.Branch, testInfrastructure.GitHubPushContent));
+          Assert.IsInstanceOf<FailedRequest>(res);
+        }
+        [Test]
+        public void CallingRunAndFailedJobReturnFailedRequest()
+        {
+          DomainRequest validRes = new DomainRequest();
+          _requestFactory.Setup(z => z.getRequestFrom(It.IsAny<RequestPayload>()))
+            .Returns(validRes);
+
+          Mock<CICDService> mockSut = getCICDServiceMock();
+          mockSut.Setup(z => z.trigger(It.IsAny<DomainRequest>()))
+            .Returns(testInfrastructure.getJob(false));
+          CICDService sut = mockSut.Object;
+
+          var res = sut.run(new RequestPayload(RequestTrigger.Branch, testInfrastructure.GitHubPushContent));
+          Assert.IsInstanceOf<FailedRequest>(res);
+        }
+        [Test]
+        public void CallingRunAndSuccessfulJobReturnsSuccessfulRequest()
+        {
+          DomainRequest validRes = new DomainRequest();
+          _requestFactory.Setup(z => z.getRequestFrom(It.IsAny<RequestPayload>()))
+            .Returns(validRes);
+
+          Mock<CICDService> mockSut = getCICDServiceMock();
+          mockSut.Setup(z => z.trigger(It.IsAny<DomainRequest>()))
+            .Returns(testInfrastructure.getJob(true));
+          CICDService sut = mockSut.Object;
+
+          var res = sut.run(new RequestPayload(RequestTrigger.Branch, testInfrastructure.GitHubPushContent));
+          Assert.IsInstanceOf<SuccessfulRequest>(res);
+        }
+      #region private members
+        private Mock<CICDService> getCICDServiceMock()
+        {
+          return new Mock<CICDService>(_jobRepo.Object, _buildService.Object, _requestFactory.Object);
         }
         private CICDService getCICDService()
         {
-            return new CICDService(_jobRepo.Object, _buildService.Object);
+            return new CICDService(_jobRepo.Object, _buildService.Object, _requestFactory.Object);
         }
+      #endregion
     }
 }

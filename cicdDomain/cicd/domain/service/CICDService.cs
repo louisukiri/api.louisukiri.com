@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using cicd.domain.cicd.domain.abstracts;
 using cicdDomain.cicd.domain.abstracts;
 using cicdDomain.cicd.domain.entity;
+using cicdDomain.cicd.domain.factory;
+using cicdDomain.cicd.infrastructure;
+using cicdDomain.cicd.infrastructure.dtos;
 
 namespace cicdDomain.cicd.domain.service
 {
@@ -15,29 +18,57 @@ namespace cicdDomain.cicd.domain.service
       private IBuildServer buildServer;
       public IJobRepo JobRepo { get; private set; }
       public IBuildService BuildService { get; private set; }
+      public IRequestFactory RequestFactory { get; set; }
+      
     #endregion
 
-    public CICDService(IJobRepo _jobRepo, IBuildService _buildService)
+    public CICDService(IJobRepo _jobRepo, IBuildService _buildService, IRequestFactory _requestFactory = null)
     {
         JobRepo = _jobRepo;
         BuildService = _buildService;
+        RequestFactory = _requestFactory ?? new RequestFactory();
     }
-    public CICDService(IBuildServer _buildServer)
+    public CICDService(IBuildServer _buildServer, IRequestFactory _requestFactory = null)
     {
       buildServer = _buildServer;
+      RequestFactory = _requestFactory ??  new RequestFactory();
     }
     public void send(string name)
     {
       buildServer.buildJob(name);
     }
-    public Job trigger()
+    public virtual Job trigger(DomainRequest request)
     {
-        Job job = JobRepo.getJobBy("testId");
-        if(!job.SuccesffullyRan)
-        {
-            return job;
-        }
-        return BuildService.build(job);
+      if (request == null)
+      {
+        return JobFactory.FailedJob("invalid request");
+      }
+      Job job = JobRepo.getJobBy(request.jobId);
+      if(!job.SuccesffullyRan)
+      {
+          return job;
+      }
+      return BuildService.build(job);
     }
+
+    public IDomainResult run(RequestPayload rqPayload)
+    {
+      if (rqPayload == null)
+      {
+        ResultFactory.FailResult("invalid payload");
+      }
+      DomainRequest request = RequestFactory.getRequestFrom(rqPayload);
+      if (request == null)
+      {
+        ResultFactory.FailResult("invalid request");
+      }
+      var result = trigger(request);
+      if (!result.SuccesffullyRan)
+      {
+        return ResultFactory.FailResult("invalid job");
+      }
+      return ResultFactory.getJobResult(result);
+    }
+
   }
 }

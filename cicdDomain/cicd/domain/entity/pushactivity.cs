@@ -16,5 +16,6 @@ namespace cicdDomain.cicd.domain.entity
         public bool forced { get; set; }
         public string base_ref { get; set; }
         public string compare { get; set; }
+        public VersionControlUser pusher { get; set; }
     }
 }

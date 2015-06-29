@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Hosting;
 using System.Web.Http;
+using cicdDomain.cicd.infrastructure;
 
 namespace api.louisukiri.com.Controllers
 {
@@ -18,12 +19,8 @@ namespace api.louisukiri.com.Controllers
             return "ok jim";
         }
         [Route("api/v1/push"), HttpPost]
-        public pushactivity push([FromBody]pushactivity value)
+        public RequestPayload push(RequestPayload value)
         {
-            if(value == null)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
             string me = Request.Content.ReadAsStringAsync().Result;
             return value;
         }
