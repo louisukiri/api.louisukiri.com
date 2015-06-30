@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using cicdDomain.cicd.domain.entity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Text.RegularExpressions;
 
 namespace cicdDomain.cicd.infrastructure
 {
@@ -21,6 +22,8 @@ namespace cicdDomain.cicd.infrastructure
   {
     public readonly RequestTrigger Trigger;
     public readonly string Payload;
+    public readonly SourceControlRepository repository;
+    public readonly pushactivity Activity;
 
     public RequestPayload(RequestTrigger _trigger, string _payload)
     {
@@ -28,17 +31,35 @@ namespace cicdDomain.cicd.infrastructure
       {
         throw new ArgumentNullException("Payload");
       }
-      Trigger = _trigger;
       Payload = _payload;
+      Activity = JsonConvert.DeserializeObject<pushactivity>(Payload);
+      if(_trigger != getTriggerTypeFromPayloadString())
+      {
+          throw new ArgumentException("bad request");
+      }
+      Trigger = _trigger;
     }
     public RequestTrigger getTriggerTypeFromPayloadString()
     {
-      var VersionControlUser = JsonConvert.DeserializeObject<pushactivity>(Payload);
-      if (VersionControlUser.pusher   != null)
+      if (Activity.pusher   != null)
       {
         return  RequestTrigger.Push;
       }
       return RequestTrigger.Unknown;
+    }
+    public string requestActionId 
+    {
+        get { 
+            return Regex.Replace(
+                Regex.Replace(Activity.repository.url, @"\W","-")
+                ,@"-+", "-")
+                + "-"+ Trigger.ToString().ToLower()
+                ;
+        }
+    }
+    public SourceControlRepository getRepository()
+    {
+        return Activity.repository;
     }
   }
 }

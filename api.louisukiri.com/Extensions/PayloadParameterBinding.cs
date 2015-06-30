@@ -28,7 +28,16 @@ namespace api.louisukiri.com.Extensions
         .ReadAsStringAsync()
         .Result
         ;
-      RequestPayload payload = new RequestPayload(RequestTrigger.Branch, payloadString);
+      RequestPayload payload;
+      try
+      {
+          payload = new RequestPayload(RequestTrigger.Push, payloadString);
+
+      }
+      catch (Exception ex)
+      {
+          throw new HttpResponseException(HttpStatusCode.BadRequest);
+      }
       if (string.IsNullOrWhiteSpace(payloadString))
       {
         throw new HttpResponseException(HttpStatusCode.BadRequest);

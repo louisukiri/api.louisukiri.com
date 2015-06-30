@@ -61,6 +61,7 @@
     <Compile Include="cicd\domain\entity\BuildService.cs" />
     <Compile Include="cicd\domain\entity\Job.cs" />
     <Compile Include="cicd\domain\entity\pushactivity.cs" />
+    <Compile Include="cicd\domain\entity\SourceControlRepository.cs" />
     <Compile Include="cicd\domain\entity\VersionControlUser.cs" />
     <Compile Include="cicd\domain\factory\JobFactory.cs" />
     <Compile Include="cicd\domain\factory\ResultFactory.cs" />

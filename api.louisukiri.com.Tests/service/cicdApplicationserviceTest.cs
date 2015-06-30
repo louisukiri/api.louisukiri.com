@@ -113,7 +113,7 @@ namespace api.louisukiri.com.Tests.service
           DomainRequest validRes = null;
           _requestFactory.Setup(z => z.getRequestFrom(It.IsAny<RequestPayload>()))
             .Returns(validRes);
-          var res = sut.run(new RequestPayload(RequestTrigger.Branch, testInfrastructure.GitHubPushContent));
+          var res = sut.run(testInfrastructure.getRequestPayload());
           Assert.IsInstanceOf<FailedRequest>(res);
         }
         [Test]
@@ -128,7 +128,7 @@ namespace api.louisukiri.com.Tests.service
             .Returns(testInfrastructure.getJob(false));
           CICDService sut = mockSut.Object;
 
-          var res = sut.run(new RequestPayload(RequestTrigger.Branch, testInfrastructure.GitHubPushContent));
+          var res = sut.run(testInfrastructure.getRequestPayload());
           Assert.IsInstanceOf<FailedRequest>(res);
         }
         [Test]
@@ -143,7 +143,7 @@ namespace api.louisukiri.com.Tests.service
             .Returns(testInfrastructure.getJob(true));
           CICDService sut = mockSut.Object;
 
-          var res = sut.run(new RequestPayload(RequestTrigger.Branch, testInfrastructure.GitHubPushContent));
+          var res = sut.run(testInfrastructure.getRequestPayload());
           Assert.IsInstanceOf<SuccessfulRequest>(res);
         }
       #region private members

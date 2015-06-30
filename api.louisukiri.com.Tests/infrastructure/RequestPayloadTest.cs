@@ -14,12 +14,50 @@ namespace api.louisukiri.com.Tests.infrastructure
       Assert.Throws<ArgumentNullException>(delegate { var a = new RequestPayload(RequestTrigger.Pull, ""); });
     }
     [Test]
+    public void whenConstructionInitializeActivity()
+    {
+        var sut = testInfrastructure.getRequestPayload();
+        Assert.IsNotNull(sut.Activity);
+    }
+    [Test]
+    public void whenConstructionInitializeRequestTrigger()
+    {
+        var sut = testInfrastructure.getRequestPayload();
+        Assert.IsNotNull(sut.Trigger);
+    }
+    [Test]
+    public void whenConstructionInitializeThrowErrorIfTriggerIsUnexpected()
+    {
+        Assert.Throws<ArgumentException>(delegate { testInfrastructure.getRequestPayload(RequestTrigger.Pull); });
+    }
+    [Test]
+    public void whenConstructionInitializeThrowErrorIfActivityIsNull()
+    {
+        Assert.Throws<ArgumentException>(delegate { var a = new RequestPayload(RequestTrigger.Pull, "{'badjsonstring':'okjim'}"); });
+    }
+    [Test]
     public void whenGettingTypeReturnPushIfPusherExists()
     {
-      var sut = new RequestPayload(RequestTrigger.Pull, testInfrastructure.GitHubPushContent);
+        var sut = testInfrastructure.getRequestPayload();
 
       Assert.AreEqual(RequestTrigger.Push, sut.getTriggerTypeFromPayloadString());
     }
+    [Test]
+    public void whenGettingJobIdConcatUrlAndMethod()
+    {
+        var sut = testInfrastructure.getRequestPayload();
+        Assert.AreEqual("https-github-com-louisukiri-paper-angel-push", sut.requestActionId);
 
+    }
+    [Test]
+    public void canGetRepositoryWhenItExistsInJson()
+    {
+        var sut = testInfrastructure.getRequestPayload();
+
+        var result = sut.getRepository();
+        Assert.AreNotEqual(string.Empty, result.id);
+        Assert.AreNotEqual(string.Empty, result.url);
+
+    }
   }
 }

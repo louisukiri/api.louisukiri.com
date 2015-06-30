@@ -21,7 +21,12 @@ namespace cicdDomain.cicd.domain.factory
     {
       string message = string.Empty;
       job.Executions.ToList().ForEach(z => message += z);
-      return new SuccessfulRequest{message = message};
+      IDomainResult result = job.SuccesffullyRan? 
+          new SuccessfulRequest{message = message}
+          : FailResult(message)
+          ;
+
+      return result;
     }
   }
 }

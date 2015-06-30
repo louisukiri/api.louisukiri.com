@@ -1,4 +1,5 @@
 ﻿using cicdDomain.cicd.domain.entity;
+using cicdDomain.cicd.infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,11 @@ namespace cicdDomain
                         new Execution(successful, DateTime.Now, messages)
                     }
       };
+    }
+
+    public static RequestPayload getRequestPayload(RequestTrigger triggerType = RequestTrigger.Push)
+    {
+        return new RequestPayload(triggerType, testInfrastructure.GitHubPushContent);
     }
     #region Push Content
     public static string GitHubPushContent = @"{
