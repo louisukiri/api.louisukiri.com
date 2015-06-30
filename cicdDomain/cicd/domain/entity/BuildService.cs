@@ -16,7 +16,7 @@ namespace cicdDomain.cicd.domain.entity
     {
     }
 
-    public virtual HttpResponseMessage trigger(string name, string uri, string relativePath )
+    public virtual HttpResponseMessage trigger(string name, string uri, string relativePath, List<KeyValuePair<string, string>> parameters=null)
     {
       using (var client = new HttpClient())
       {
@@ -27,8 +27,16 @@ namespace cicdDomain.cicd.domain.entity
 
         var keyvalues = new List<KeyValuePair<string, string>>();
         keyvalues.Add(new KeyValuePair<string, string>("test", name));
-
-        var content = new FormUrlEncodedContent(keyvalues);
+        FormUrlEncodedContent content=null;
+        if(parameters.Count > 0)
+        {
+            content = new FormUrlEncodedContent(parameters);
+            relativePath += "/buildWithParameters";
+         }
+        else
+        {
+            relativePath += "/build";
+        }
         //job/CI-Api/buildWithParameters
         return client.PostAsync(relativePath, content).Result;
 

@@ -61,5 +61,7 @@ namespace cicdDomain.cicd.domain.entity
         {
             this.Executions.Add(new Execution(successful, DateTime.Now, Messages));
         }
+
+        public List<KeyValuePair<string, string>> parameters { get; set; }
     }
 }
