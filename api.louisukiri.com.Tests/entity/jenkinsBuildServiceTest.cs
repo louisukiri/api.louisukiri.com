@@ -1,4 +1,5 @@
-﻿using cicdDomain.cicd.domain.abstracts;
+﻿using System.Collections.Generic;
+using cicdDomain.cicd.domain.abstracts;
 using cicdDomain.cicd.domain.entity;
 using Moq;
 using NUnit.Framework;
@@ -26,7 +27,7 @@ namespace api.louisukiri.com.Tests.entity
     public void Given200ResponseAddSuccessfulLastExecution()
     {
         Job testJob = new Job();
-        _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+        _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>()))
             .Returns(
             new HttpResponseMessage
             {
@@ -49,7 +50,7 @@ namespace api.louisukiri.com.Tests.entity
     public void GivenNon200ResponseBuildAddFailedLastExecution()
     {
         Job testJob = new Job();
-        _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+        _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>()))
             .Returns(
             new HttpResponseMessage
             {
@@ -65,7 +66,7 @@ namespace api.louisukiri.com.Tests.entity
     public void GivenExceptionAddFailedLastExecution()
     {
         Job testJob = new Job();
-        _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+        _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>()))
             .Returns((string a)=>{
                 throw new Exception("error");
                 }

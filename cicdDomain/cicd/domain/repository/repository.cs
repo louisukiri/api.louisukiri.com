@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using cicdDomain.cicd.domain.factory;
 
 namespace cicdDomain.cicd.domain.repository
 {
@@ -20,11 +21,24 @@ namespace cicdDomain.cicd.domain.repository
                   new KeyValuePair<string,string>("Git_Url","https://github.com/louisukiri/paper-angel.git")
                 }
               }
+           },
+           {"http-louisjenkins-dc1-corp-gd-8080-push", new Job(){
+           name="louisukiri-ci"
+           ,uri="http://louisjenkins.dc1.corp.gd:8080/"
+           ,path="job/CI-Api"
+           ,parameters=new List<KeyValuePair<string,string>>(){
+                  new KeyValuePair<string,string>("test","test string passed in")
+                }
+              }
            }
         };
         public Job getJobBy(string id)
         {
-            throw new NotImplementedException();
+          if (jobs.ContainsKey(id))
+          {
+            return jobs[id];
+          }
+          return JobFactory.FailedJob("Job Not Found");
         }
     }
 }
