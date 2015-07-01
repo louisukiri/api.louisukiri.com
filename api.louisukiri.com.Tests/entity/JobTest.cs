@@ -20,7 +20,7 @@ namespace api.louisukiri.com.Tests.entity
             _sut = new Mock<Job>();
             _sut.CallBase = true;
         }
-        [Test]
+        [Test] 
         public void LastExecutionReturnsTheMostRecentExecution()
         {
             DateTime baseDate = DateTime.Now;

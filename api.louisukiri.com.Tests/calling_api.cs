@@ -15,7 +15,7 @@ namespace api.louisukiri.com.Tests
         public void testWorks()
         {
             var server = new virtualServer();
-            var resp = server.getAPIResponse("/triggers/test");
+            var resp = server.getAPIResponse("/v1/test");
 
             Assert.AreEqual(HttpStatusCode.OK, resp.StatusCode);
         }
@@ -36,6 +36,23 @@ namespace api.louisukiri.com.Tests
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
             //Assert.AreEqual("", response.Content.ReadAsStringAsync().Result);
+
+        }
+        [Test]
+        public void pushIntegratedTest()
+        {
+          var server = new virtualServer();
+          var req = server.getRequestMessageWithPartialUri("/v1/push");
+          req.Method = HttpMethod.Post;
+          req.Content = new StringContent(testInfrastructure.GitHubPushContent);
+          req.Content.Headers.Clear();
+          req.Content.Headers.Add("content-type", "application/json");
+
+          var response = server.getAPIResponse(req);
+
+          Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
+          //Assert.AreEqual("", response.Content.ReadAsStringAsync().Result);
 
         }
         [Test]

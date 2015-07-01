@@ -22,27 +22,51 @@ namespace api.louisukiri.com.Extensions
     {
       if (actionContext.Request.Content == null)
       {
-        throw new HttpResponseException(HttpStatusCode.BadRequest);
+        return SetActionParameter(actionContext, null); ;
       }
       string payloadString = actionContext.Request.Content
         .ReadAsStringAsync()
         .Result
         ;
+      if (!actionContext.Request.Headers.Contains("X-GitHub-Event")
+        || string.IsNullOrWhiteSpace(payloadString)
+        )
+      {
+        return SetActionParameter(actionContext, null);
+      }
+      RequestTrigger triggerType = GetTriggerTypeFromHeader(actionContext);
+      
       RequestPayload payload;
       try
       {
-          payload = new RequestPayload(RequestTrigger.Push, payloadString);
-
+          payload = new RequestPayload(triggerType, payloadString);
       }
       catch (Exception ex)
       {
-          throw new HttpResponseException(HttpStatusCode.BadRequest);
+        return SetActionParameter(actionContext, null);
       }
-      if (string.IsNullOrWhiteSpace(payloadString))
+      return SetActionParameter(actionContext, payload);
+    }
+    private RequestTrigger GetTriggerTypeFromHeader(HttpActionContext actionContext)
+    {
+      string keyvalue = actionContext.Request.Headers
+        .First(z => z.Key == "X-GitHub-Event")
+        .Value.First();
+      switch (keyvalue)
       {
-        throw new HttpResponseException(HttpStatusCode.BadRequest);
+        case "push":
+          return RequestTrigger.Push;
+        case "fork":
+          return RequestTrigger.Branch;
+        case "pull":
+          return RequestTrigger.Pull;
       }
+      return RequestTrigger.Unknown;
+    }
+    private Task SetActionParameter(HttpActionContext actionContext, RequestPayload payload)
+    {
       actionContext.ActionArguments[Descriptor.ParameterName] = payload;
+      //this is required so this method can exit at the point of invocation
 
       var tsc = new TaskCompletionSource<object>();
       tsc.SetResult(null);

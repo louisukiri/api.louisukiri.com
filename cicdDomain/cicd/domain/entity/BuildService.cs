@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Net.Http.Headers;
 using cicd.domain.cicd.domain.abstracts;
 using cicdDomain.cicd.domain.abstracts;
@@ -48,7 +49,18 @@ namespace cicdDomain.cicd.domain.entity
         HttpResponseMessage a = null;
         try
         {
-            a = trigger(job.name, job.uri, job.path);
+          var hasEmptyGitUrl = job.parameters
+            .Any(z => z.Key == "GitUrl" 
+              && string.IsNullOrWhiteSpace(z.Value));
+          if (hasEmptyGitUrl)
+          {
+            var gitUrlPair = job.parameters
+              .First(z => z.Key == "GitUrl"
+                          && string.IsNullOrWhiteSpace(z.Value));
+            job.parameters.Remove(gitUrlPair);
+            job.parameters.Add(new KeyValuePair<string, string>("GitUrl", job.vcUrl));
+          }
+            a = trigger(job.name, job.uri, job.path, job.parameters);
             job.AddRun(a.IsSuccessStatusCode, new List<string> { a.StatusCode.ToString() });
         }
         catch(Exception ex)

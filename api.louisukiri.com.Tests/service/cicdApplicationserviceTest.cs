@@ -19,17 +19,14 @@ namespace api.louisukiri.com.Tests.service
         Mock<IBuildService> _buildService;
         Mock<IRequestFactory> _requestFactory;
 
-      public DomainRequest request;
+      public RequestPayload request;
         [TestFixtureSetUp]
         public void setup()
         {
             _jobRepo = new Mock<IJobRepo>();
             _buildService = new Mock<IBuildService>();
           _requestFactory = new Mock<IRequestFactory>();
-          request = new DomainRequest()
-          {
-            jobId = "test"
-          };
+          request = new RequestPayload(RequestTrigger.Push, testInfrastructure.GitHubPushContent);
         }
         [Test]
         public void CicdApplicationServiceRequiresJobRepo()
@@ -110,10 +107,7 @@ namespace api.louisukiri.com.Tests.service
         public void CallingRunAndRequestObjectIsNullReturnFailedResult()
         {
           CICDService sut = getCICDService();
-          DomainRequest validRes = null;
-          _requestFactory.Setup(z => z.getRequestFrom(It.IsAny<RequestPayload>()))
-            .Returns(validRes);
-          var res = sut.run(testInfrastructure.getRequestPayload());
+          var res = sut.run(null);
           Assert.IsInstanceOf<FailedRequest>(res);
         }
         [Test]
@@ -124,7 +118,7 @@ namespace api.louisukiri.com.Tests.service
             .Returns(validRes);
 
           Mock<CICDService> mockSut = getCICDServiceMock();
-          mockSut.Setup(z => z.trigger(It.IsAny<DomainRequest>()))
+          mockSut.Setup(z => z.trigger(It.IsAny<RequestPayload>()))
             .Returns(testInfrastructure.getJob(false));
           CICDService sut = mockSut.Object;
 
@@ -139,7 +133,7 @@ namespace api.louisukiri.com.Tests.service
             .Returns(validRes);
 
           Mock<CICDService> mockSut = getCICDServiceMock();
-          mockSut.Setup(z => z.trigger(It.IsAny<DomainRequest>()))
+          mockSut.Setup(z => z.trigger(It.IsAny<RequestPayload>()))
             .Returns(testInfrastructure.getJob(true));
           CICDService sut = mockSut.Object;
 

@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using cicdDomain.cicd.domain.abstracts;
 using cicdDomain.cicd.domain.entity;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Net.Http;
+using NUnit.Framework.Constraints;
 
 
 namespace api.louisukiri.com.Tests.entity
@@ -49,18 +51,46 @@ namespace api.louisukiri.com.Tests.entity
     [Test]
     public void GivenNon200ResponseBuildAddFailedLastExecution()
     {
-        Job testJob = new Job();
-        _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>()))
-            .Returns(
-            new HttpResponseMessage
-            {
-                StatusCode = System.Net.HttpStatusCode.NotFound
-            }
-            );
-        int Executions = testJob.Executions.Count;
-        var res = sut.build(testJob);
-        Assert.AreEqual(Executions + 1, testJob.Executions.Count);
-        Assert.IsFalse(res.SuccesffullyRan);
+      Job testJob = new Job();
+      _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>()))
+          .Returns(
+          new HttpResponseMessage
+          {
+            StatusCode = System.Net.HttpStatusCode.NotFound
+          }
+          );
+      int Executions = testJob.Executions.Count;
+      var res = sut.build(testJob);
+      Assert.AreEqual(Executions + 1, testJob.Executions.Count);
+      Assert.IsFalse(res.SuccesffullyRan);
+    }
+    [Test]
+    public void GivenJobWithEmptyGitUrlParameterAddUrlParameterFromJob()
+    {
+      Job testJob = new Job(){ vcUrl = "http://test.foo"};
+      testJob.parameters.Add(new KeyValuePair<string, string>("GitUrl",""));
+      _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>()))
+          .Returns((string a, string b, string c, List<KeyValuePair<string, string>> d) =>
+          {
+            HttpResponseMessage msg = null;
+            var exists = d.Any(z => z.Key == "GitUrl" && !string.IsNullOrWhiteSpace(z.Value));
+            if(exists)
+            {                
+              msg = new HttpResponseMessage
+                {
+                  StatusCode = System.Net.HttpStatusCode.OK
+                };
+            }            
+            return msg ?? new HttpResponseMessage
+              {
+                StatusCode = System.Net.HttpStatusCode.BadRequest
+              }; 
+
+          }
+       );
+      var res = sut.build(testJob);
+
+      Assert.IsTrue(res.SuccesffullyRan);
     }
     [Test]
     public void GivenExceptionAddFailedLastExecution()

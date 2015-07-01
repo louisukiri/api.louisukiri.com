@@ -44,13 +44,13 @@ namespace cicdDomain.cicd.domain.service
     {
       buildServer.buildJob(name);
     }
-    public virtual Job trigger(DomainRequest request)
+    public virtual Job trigger(RequestPayload request)
     {
       if (request == null)
       {
         return JobFactory.FailedJob("invalid request");
       }
-      Job job = JobRepo.getJobBy(request.jobId);
+      Job job = JobRepo.getJobBy(request.requestActionId);
       if(!job.SuccesffullyRan)
       {
           return job;
@@ -62,14 +62,9 @@ namespace cicdDomain.cicd.domain.service
     {
       if (rqPayload == null)
       {
-        ResultFactory.FailResult("invalid payload");
+        return ResultFactory.FailResult("invalid payload");
       }
-      DomainRequest request = RequestFactory.getRequestFrom(rqPayload);
-      if (request == null)
-      {
-        ResultFactory.FailResult("invalid request");
-      }
-      var result = trigger(request);
+      var result = trigger(rqPayload);
       if (!result.SuccesffullyRan)
       {
         return ResultFactory.FailResult("invalid job");

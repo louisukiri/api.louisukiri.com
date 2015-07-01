@@ -15,7 +15,7 @@ namespace api.louisukiri.com.Controllers
 {
     public class TriggersController : ApiController
     {
-        [Route("api/v1/test"), HttpPost]
+        [Route("api/v1/test"), HttpGet]
         public string test()
         {
             return "ok jim";

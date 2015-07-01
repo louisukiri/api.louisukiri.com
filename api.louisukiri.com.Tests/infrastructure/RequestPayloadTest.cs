@@ -43,10 +43,10 @@ namespace api.louisukiri.com.Tests.infrastructure
       Assert.AreEqual(RequestTrigger.Push, sut.getTriggerTypeFromPayloadString());
     }
     [Test]
-    public void whenGettingJobIdConcatUrlAndMethod()
+    public void whenGettingJobIdConcatUrlAndMethodAsLowerCase()
     {
         var sut = testInfrastructure.getRequestPayload();
-        Assert.AreEqual("https-github-com-louisukiri-paper-angel-push", sut.requestActionId);
+        Assert.AreEqual("https-github-secureserver-net-lukiri-ci-push", sut.requestActionId);
 
     }
     [Test]

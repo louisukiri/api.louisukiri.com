@@ -50,9 +50,10 @@ namespace cicdDomain.cicd.infrastructure
     public string requestActionId 
     {
         get { 
-            return Regex.Replace(
-                Regex.Replace(Activity.repository.url, @"\W","-")
-                ,@"-+", "-")
+            return //Regex.Replace(
+                Regex.Replace(Activity.repository.url, @"\W+","-")
+                //,@"-+", "-")
+                .ToLower()
                 + "-"+ Trigger.ToString().ToLower()
                 ;
         }

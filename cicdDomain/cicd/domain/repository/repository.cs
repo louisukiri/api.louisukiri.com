@@ -17,8 +17,10 @@ namespace cicdDomain.cicd.domain.repository
            name="louisukiri-paperAngel"
            ,uri="http://4ab16704.ngrok.io/"
            ,path="job/Test"
+           ,vcUrl = "https://github.com/louisukiri/paper-angel/"
            ,parameters=new List<KeyValuePair<string,string>>(){
-                  new KeyValuePair<string,string>("Git_Url","https://github.com/louisukiri/paper-angel.git")
+                  new KeyValuePair<string,string>("GitUrl","https://github.com/louisukiri/paper-angel.git"),
+                  new KeyValuePair<string,string>("Name","louisukiri-paperAngel")
                 }
               }
            },
@@ -26,8 +28,33 @@ namespace cicdDomain.cicd.domain.repository
            name="louisukiri-ci"
            ,uri="http://louisjenkins.dc1.corp.gd:8080/"
            ,path="job/CI-Api"
+           ,vcUrl = ""
            ,parameters=new List<KeyValuePair<string,string>>(){
-                  new KeyValuePair<string,string>("test","test string passed in")
+                  new KeyValuePair<string,string>("GitUrl","https://github.com/louisukiri/paper-angel.git"),
+                  new KeyValuePair<string,string>("Name","louisukiri-ci")
+                }
+              }
+           },
+           //https-github-secureserver-net-lukiri-CI-push
+           {"https-github-secureserver-net-lukiri-ci-push", new Job(){
+           name="louisukiri-ci"
+           ,uri="http://louisjenkins.dc1.corp.gd:8080/"
+           ,path="job/CI-Api"
+           ,vcUrl = "https://github.secureserver.net/lukiri/CI/"
+           ,parameters=new List<KeyValuePair<string,string>>(){
+                  new KeyValuePair<string,string>("GitUrl",string.Empty),
+                  new KeyValuePair<string,string>("Name","louisukiri-ci")
+                }
+              }
+           },
+           {"https-github-secureserver-net-lukiri-ci-branch", new Job(){
+           name="louisukiri-ci"
+           ,uri="http://louisjenkins.dc1.corp.gd:8080/"
+           ,path="job/CI-Api"
+           ,vcUrl = "https://github.secureserver.net/lukiri/CI/"
+           ,parameters=new List<KeyValuePair<string,string>>(){
+                  new KeyValuePair<string,string>("GitUrl",string.Empty),
+                  new KeyValuePair<string,string>("Name","louisukiri-ci")
                 }
               }
            }
