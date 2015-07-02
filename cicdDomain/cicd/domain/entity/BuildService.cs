@@ -26,8 +26,6 @@ namespace cicdDomain.cicd.domain.entity
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
 
-        var keyvalues = new List<KeyValuePair<string, string>>();
-        keyvalues.Add(new KeyValuePair<string, string>("test", name));
         FormUrlEncodedContent content=null;
         if(parameters.Count > 0)
         {

@@ -56,7 +56,7 @@ namespace api.louisukiri.com.Tests
 
         }
         [Test]
-        public void returnBadRequestWhenMissingPushContent()
+        public void returnNotFoundWhenMissingPushContent()
         {
             var server = new virtualServer();
             var response = new HttpResponseMessage();
@@ -69,7 +69,7 @@ namespace api.louisukiri.com.Tests
             Type t = server.ControllerType(req, out response);
 
             Assert.AreEqual(t, typeof(TriggersController));
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
 
     }

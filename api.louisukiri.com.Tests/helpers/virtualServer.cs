@@ -100,7 +100,7 @@ namespace api.louisukiri.com.Tests.helpers
             HttpRequestMessage message = new HttpRequestMessage();
             message.RequestUri = new Uri(baseUri);
             message.Method = method;
-
+            message.Headers.Add("X-GitHub-Event", "push");
             return message;
         }
     }
