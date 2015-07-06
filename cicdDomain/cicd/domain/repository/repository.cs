@@ -20,7 +20,8 @@ namespace cicdDomain.cicd.domain.repository
            ,vcUrl = "https://github.com/louisukiri/paper-angel/"
            ,parameters=new List<KeyValuePair<string,string>>(){
                   new KeyValuePair<string,string>("GitUrl","https://github.com/louisukiri/paper-angel.git"),
-                  new KeyValuePair<string,string>("Name","louisukiri-paperAngel")
+                  new KeyValuePair<string,string>("Name","louisukiri-paperAngel"),
+                  new KeyValuePair<string,string>("BranchName",string.Empty)
                 }
               }
            },
@@ -31,7 +32,8 @@ namespace cicdDomain.cicd.domain.repository
            ,vcUrl = ""
            ,parameters=new List<KeyValuePair<string,string>>(){
                   new KeyValuePair<string,string>("GitUrl","https://github.com/louisukiri/paper-angel.git"),
-                  new KeyValuePair<string,string>("Name","louisukiri-ci")
+                  new KeyValuePair<string,string>("Name","louisukiri-ci"),
+                  new KeyValuePair<string,string>("BranchName",string.Empty)
                 }
               }
            },
@@ -43,7 +45,8 @@ namespace cicdDomain.cicd.domain.repository
            ,vcUrl = "https://github.secureserver.net/lukiri/CI/"
            ,parameters=new List<KeyValuePair<string,string>>(){
                   new KeyValuePair<string,string>("GitUrl",string.Empty),
-                  new KeyValuePair<string,string>("Name","louisukiri-ci")
+                  new KeyValuePair<string,string>("Name","louisukiri-ci"),
+                  new KeyValuePair<string,string>("BranchName",string.Empty)
                 }
               }
            },
@@ -54,7 +57,8 @@ namespace cicdDomain.cicd.domain.repository
            ,vcUrl = "https://github.secureserver.net/lukiri/CI/"
            ,parameters=new List<KeyValuePair<string,string>>(){
                   new KeyValuePair<string,string>("GitUrl",string.Empty),
-                  new KeyValuePair<string,string>("Name","louisukiri-ci")
+                  new KeyValuePair<string,string>("Name","louisukiri-ci"),
+                  new KeyValuePair<string,string>("BranchName",string.Empty)
                 }
               }
            }
