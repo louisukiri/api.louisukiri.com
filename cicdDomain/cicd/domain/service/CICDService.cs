@@ -50,7 +50,7 @@ namespace cicdDomain.cicd.domain.service
       {
         return JobFactory.FailedJob("invalid request");
       }
-      Job job = JobRepo.getJobBy(request.requestActionId);
+      Job job = JobRepo.getJobBy(request.Activity.Id);
       if(!job.SuccesffullyRan)
       {
           return job;

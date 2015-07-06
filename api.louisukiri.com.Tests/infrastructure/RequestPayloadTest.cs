@@ -35,29 +35,5 @@ namespace api.louisukiri.com.Tests.infrastructure
     {
         Assert.Throws<ArgumentException>(delegate { var a = new RequestPayload(RequestTrigger.Pull, "{'badjsonstring':'okjim'}"); });
     }
-    [Test]
-    public void whenGettingTypeReturnPushIfPusherExists()
-    {
-        var sut = testInfrastructure.getRequestPayload();
-
-      Assert.AreEqual(RequestTrigger.Push, sut.getTriggerTypeFromPayloadString());
-    }
-    [Test]
-    public void whenGettingJobIdConcatUrlAndMethodAsLowerCase()
-    {
-        var sut = testInfrastructure.getRequestPayload();
-        Assert.AreEqual("https-github-secureserver-net-lukiri-ci-push", sut.requestActionId);
-
-    }
-    [Test]
-    public void canGetRepositoryWhenItExistsInJson()
-    {
-        var sut = testInfrastructure.getRequestPayload();
-
-        var result = sut.getRepository();
-        Assert.AreNotEqual(string.Empty, result.id);
-        Assert.AreNotEqual(string.Empty, result.url);
-
-    }
   }
 }

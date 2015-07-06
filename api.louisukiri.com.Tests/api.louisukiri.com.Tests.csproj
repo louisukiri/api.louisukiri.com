@@ -108,6 +108,7 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="entity\jenkinsBuildServiceTest.cs" />
     <Compile Include="entity\JobTest.cs" />
+    <Compile Include="entity\pushactivityTest.cs" />
     <Compile Include="factory\ResultFactoryTest.cs" />
     <Compile Include="helpers\virtualServer.cs" />
     <Compile Include="infrastructure\RequestPayloadTest.cs" />

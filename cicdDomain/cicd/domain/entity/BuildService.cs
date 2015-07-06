@@ -48,7 +48,10 @@ namespace cicdDomain.cicd.domain.entity
         try
         {
           var hasEmptyGitUrl = job.parameters
-            .Any(z => z.Key == "GitUrl" 
+            .Any(z => z.Key == "GitUrl"
+              && string.IsNullOrWhiteSpace(z.Value));
+          var hasEmptyBranchName = job.parameters
+            .Any(z => z.Key == "BranchName"
               && string.IsNullOrWhiteSpace(z.Value));
           if (hasEmptyGitUrl)
           {
@@ -57,6 +60,14 @@ namespace cicdDomain.cicd.domain.entity
                           && string.IsNullOrWhiteSpace(z.Value));
             job.parameters.Remove(gitUrlPair);
             job.parameters.Add(new KeyValuePair<string, string>("GitUrl", job.vcUrl));
+          }
+          if (hasEmptyBranchName)
+          {
+            var gitUrlPair = job.parameters
+              .First(z => z.Key == "BranchName"
+                          && string.IsNullOrWhiteSpace(z.Value));
+            job.parameters.Remove(gitUrlPair);
+            job.parameters.Add(new KeyValuePair<string, string>("BranchName", job.branch));
           }
             a = trigger(job.name, job.uri, job.path, job.parameters);
             job.AddRun(a.IsSuccessStatusCode, new List<string> { a.StatusCode.ToString() });

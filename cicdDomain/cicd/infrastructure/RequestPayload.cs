@@ -33,34 +33,11 @@ namespace cicdDomain.cicd.infrastructure
       }
       Payload = _payload;
       Activity = JsonConvert.DeserializeObject<pushactivity>(Payload);
-      if(_trigger != getTriggerTypeFromPayloadString())
+      if(_trigger != Activity.type)
       {
           throw new ArgumentException("bad request");
       }
       Trigger = _trigger;
-    }
-    public RequestTrigger getTriggerTypeFromPayloadString()
-    {
-      if (Activity.pusher   != null)
-      {
-        return  RequestTrigger.Push;
-      }
-      return RequestTrigger.Unknown;
-    }
-    public string requestActionId 
-    {
-        get { 
-            return //Regex.Replace(
-                Regex.Replace(Activity.repository.url, @"\W+","-")
-                //,@"-+", "-")
-                .ToLower()
-                + "-"+ Trigger.ToString().ToLower()
-                ;
-        }
-    }
-    public SourceControlRepository getRepository()
-    {
-        return Activity.repository;
     }
   }
 }

@@ -67,24 +67,52 @@ namespace api.louisukiri.com.Tests.entity
     [Test]
     public void GivenJobWithEmptyGitUrlParameterAddUrlParameterFromJob()
     {
-      Job testJob = new Job(){ vcUrl = "http://test.foo"};
-      testJob.parameters.Add(new KeyValuePair<string, string>("GitUrl",""));
+      Job testJob = new Job() { vcUrl = "http://test.foo" };
+      testJob.parameters.Add(new KeyValuePair<string, string>("GitUrl", ""));
       _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>()))
           .Returns((string a, string b, string c, List<KeyValuePair<string, string>> d) =>
           {
             HttpResponseMessage msg = null;
             var exists = d.Any(z => z.Key == "GitUrl" && !string.IsNullOrWhiteSpace(z.Value));
-            if(exists)
-            {                
+            if (exists)
+            {
               msg = new HttpResponseMessage
-                {
-                  StatusCode = System.Net.HttpStatusCode.OK
-                };
-            }            
-            return msg ?? new HttpResponseMessage
               {
-                StatusCode = System.Net.HttpStatusCode.BadRequest
-              }; 
+                StatusCode = System.Net.HttpStatusCode.OK
+              };
+            }
+            return msg ?? new HttpResponseMessage
+            {
+              StatusCode = System.Net.HttpStatusCode.BadRequest
+            };
+
+          }
+       );
+      var res = sut.build(testJob);
+
+      Assert.IsTrue(res.SuccesffullyRan);
+    }
+    [Test]
+    public void GivenJobWithEmptyBranchNameParameterAddBranchParameterFromJob()
+    {
+      Job testJob = new Job(){branch="test"};
+      testJob.parameters.Add(new KeyValuePair<string, string>("BranchName", ""));
+      _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>()))
+          .Returns((string a, string b, string c, List<KeyValuePair<string, string>> d) =>
+          {
+            HttpResponseMessage msg = null;
+            var exists = d.Any(z => z.Key == "BranchName" && !string.IsNullOrWhiteSpace(z.Value));
+            if (exists)
+            {
+              msg = new HttpResponseMessage
+              {
+                StatusCode = System.Net.HttpStatusCode.OK
+              };
+            }
+            return msg ?? new HttpResponseMessage
+            {
+              StatusCode = System.Net.HttpStatusCode.BadRequest
+            };
 
           }
        );
