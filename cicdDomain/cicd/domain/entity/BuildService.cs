@@ -42,24 +42,19 @@ namespace cicdDomain.cicd.domain.entity
       }
     }
 
-    public Job build(Job job)
+    public Job build(Job job, pushactivity Activity)
     {
-        HttpResponseMessage a = null;
         try
         {
-          var hasEmptyGitUrl = job.parameters
-            .Any(z => z.Key == "GitUrl"
-              && string.IsNullOrWhiteSpace(z.Value));
-          var hasEmptyBranchName = job.parameters
-            .Any(z => z.Key == "BranchName"
-              && string.IsNullOrWhiteSpace(z.Value));
+          var hasEmptyGitUrl = HasEmptyParameterValue(job, "GitUrl");
+          var hasEmptyBranchName = HasEmptyParameterValue(job, "BranchName");
           if (hasEmptyGitUrl)
           {
             var gitUrlPair = job.parameters
               .First(z => z.Key == "GitUrl"
                           && string.IsNullOrWhiteSpace(z.Value));
             job.parameters.Remove(gitUrlPair);
-            job.parameters.Add(new KeyValuePair<string, string>("GitUrl", job.vcUrl));
+            job.parameters.Add(new KeyValuePair<string, string>("GitUrl", Activity.repository.url));
           }
           if (hasEmptyBranchName)
           {
@@ -67,10 +62,10 @@ namespace cicdDomain.cicd.domain.entity
               .First(z => z.Key == "BranchName"
                           && string.IsNullOrWhiteSpace(z.Value));
             job.parameters.Remove(gitUrlPair);
-            job.parameters.Add(new KeyValuePair<string, string>("BranchName", job.branch));
+            job.parameters.Add(new KeyValuePair<string, string>("BranchName", Activity.Branch));
           }
-            a = trigger(job.name, job.uri, job.path, job.parameters);
-            job.AddRun(a.IsSuccessStatusCode, new List<string> { a.StatusCode.ToString() });
+          HttpResponseMessage a = trigger(job.name, job.uri, job.path, job.parameters);
+          job.AddRun(a.IsSuccessStatusCode, new List<string> { a.StatusCode.ToString() });
         }
         catch(Exception ex)
         {
@@ -79,6 +74,17 @@ namespace cicdDomain.cicd.domain.entity
 
         
         return job;
+    }
+
+    private static bool HasEmptyParameterValue(Job job, string Key)
+    {
+      if (string.IsNullOrWhiteSpace(Key))
+      {
+        return false;
+      }
+      return job.parameters
+        .Any(z => z.Key == Key
+                  && string.IsNullOrWhiteSpace(z.Value));
     }
   }
 }

@@ -9,6 +9,6 @@ namespace cicdDomain.cicd.domain.abstracts
 {
     public interface IBuildService
     {
-        Job build(Job job);
+        Job build(Job job, pushactivity activity);
     }
 }

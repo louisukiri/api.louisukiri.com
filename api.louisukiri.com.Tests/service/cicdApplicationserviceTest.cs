@@ -78,12 +78,12 @@ namespace api.louisukiri.com.Tests.service
             string id = "testID";
             _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
                 .Returns(testInfrastructure.getJob(false));
-            _buildService.Setup(z => z.build(It.IsAny<Job>()));
+            _buildService.Setup(z => z.build(It.IsAny<Job>(), It.IsAny<pushactivity>()));
 
             CICDService sut = getCICDService();
             var res = sut.trigger(request);
 
-            _buildService.Verify(z => z.build(It.IsAny<Job>()), Times.Never());
+            _buildService.Verify(z => z.build(It.IsAny<Job>(),It.IsAny<pushactivity>()), Times.Never());
         }
         [Test, Ignore]
         public void WhenCallingRunReturnInvalidResultIfPayloadStringNullOrEmpty()

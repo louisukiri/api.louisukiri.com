@@ -55,7 +55,7 @@ namespace cicdDomain.cicd.domain.service
       {
           return job;
       }
-      return BuildService.build(job);
+      return BuildService.build(job, request.Activity);
     }
 
     public IDomainResult run(RequestPayload rqPayload)

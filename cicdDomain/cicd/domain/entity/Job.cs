@@ -24,7 +24,7 @@ namespace cicdDomain.cicd.domain.entity
         public virtual string name { get; set; }
         public virtual string uri { get; set; }
         public virtual string path { get; set; }
-        public string vcUrl { get; set; }
+        //public string vcUrl { get; set; }
         public Job()
         {
             Executions = new List<Execution>();

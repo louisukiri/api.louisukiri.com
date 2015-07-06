@@ -2,6 +2,7 @@
 using System.Linq;
 using cicdDomain.cicd.domain.abstracts;
 using cicdDomain.cicd.domain.entity;
+using cicdDomain.cicd.infrastructure;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -37,7 +38,7 @@ namespace api.louisukiri.com.Tests.entity
             }
             );
 
-        var res = sut.build(testJob);
+        var res = sut.build(testJob, new pushactivity());
         Assert.IsTrue(res.Executions.Count > 0);
         Assert.IsTrue(res.SuccesffullyRan);
     }
@@ -60,14 +61,15 @@ namespace api.louisukiri.com.Tests.entity
           }
           );
       int Executions = testJob.Executions.Count;
-      var res = sut.build(testJob);
+      var res = sut.build(testJob, new pushactivity());
       Assert.AreEqual(Executions + 1, testJob.Executions.Count);
       Assert.IsFalse(res.SuccesffullyRan);
     }
     [Test]
-    public void GivenJobWithEmptyGitUrlParameterAddUrlParameterFromJob()
+    public void GivenJobWithEmptyGitUrlParameterAddUrlParameterFromActivity()
     {
-      Job testJob = new Job() { vcUrl = "http://test.foo" };
+      pushactivity req = new pushactivity { repository = new SourceControlRepository { url = "http://test.foo" } };
+      Job testJob = new Job();
       testJob.parameters.Add(new KeyValuePair<string, string>("GitUrl", ""));
       _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>()))
           .Returns((string a, string b, string c, List<KeyValuePair<string, string>> d) =>
@@ -88,14 +90,15 @@ namespace api.louisukiri.com.Tests.entity
 
           }
        );
-      var res = sut.build(testJob);
+      var res = sut.build(testJob, req);
 
       Assert.IsTrue(res.SuccesffullyRan);
     }
     [Test]
     public void GivenJobWithEmptyBranchNameParameterAddBranchParameterFromJob()
     {
-      Job testJob = new Job(){branch="test"};
+      pushactivity activity = new pushactivity {@ref = "ref/heads/test"};
+      Job testJob = new Job();
       testJob.parameters.Add(new KeyValuePair<string, string>("BranchName", ""));
       _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>()))
           .Returns((string a, string b, string c, List<KeyValuePair<string, string>> d) =>
@@ -116,7 +119,7 @@ namespace api.louisukiri.com.Tests.entity
 
           }
        );
-      var res = sut.build(testJob);
+      var res = sut.build(testJob, activity);
 
       Assert.IsTrue(res.SuccesffullyRan);
     }
@@ -130,7 +133,7 @@ namespace api.louisukiri.com.Tests.entity
                 }
             );
         int Executions = testJob.Executions.Count;
-        var res = sut.build(testJob);
+        var res = sut.build(testJob, new pushactivity());
         Assert.AreEqual(Executions + 1, testJob.Executions.Count);
         Assert.IsFalse(res.SuccesffullyRan);
     }
