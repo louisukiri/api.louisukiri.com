@@ -58,7 +58,7 @@
     <Compile Include="cicd\domain\abstracts\IBuildService.cs" />
     <Compile Include="cicd\domain\abstracts\IDomainResult.cs" />
     <Compile Include="cicd\domain\abstracts\IJobRepo.cs" />
-    <Compile Include="cicd\domain\entity\BuildService.cs" />
+    <Compile Include="cicd\domain\service\BuildService.cs" />
     <Compile Include="cicd\domain\entity\Job.cs" />
     <Compile Include="cicd\domain\entity\pushactivity.cs" />
     <Compile Include="cicd\domain\entity\SourceControlRepository.cs" />

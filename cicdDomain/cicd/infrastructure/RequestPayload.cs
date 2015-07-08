@@ -33,11 +33,26 @@ namespace cicdDomain.cicd.infrastructure
       }
       Payload = _payload;
       Activity = JsonConvert.DeserializeObject<pushactivity>(Payload);
+      _trigger = NormalizeRequestType(_trigger);
       if(_trigger != Activity.type)
       {
           throw new ArgumentException("bad request");
       }
       Trigger = _trigger;
+    }
+    /// <summary>
+    /// fix for rules that create inconsistencies between domain rules
+    /// and the received header
+    /// </summary>
+    /// <param name="_trigger"></param>
+    /// <returns></returns>
+    private RequestTrigger NormalizeRequestType(RequestTrigger _trigger)
+    {
+      if (Activity.type == RequestTrigger.Branch && _trigger == RequestTrigger.Push)
+      {
+        _trigger = RequestTrigger.Branch;
+      }
+      return _trigger;
     }
   }
 }

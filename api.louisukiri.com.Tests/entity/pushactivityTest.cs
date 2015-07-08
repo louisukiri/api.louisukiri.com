@@ -41,6 +41,24 @@ namespace api.louisukiri.com.Tests.entity
       Assert.AreEqual("testBranch", sut.Branch);
     }
     [Test]
+    public void BaseBranchIsLastValueInBaseRefArray()
+    {
+      pushactivity sut = getActivity(baseRefDir: "ref/heads/testBranch");
+      Assert.AreEqual("testBranch", sut.BaseBranch);
+    }
+    [Test]
+    public void IsStagingJobIfBaseBranchIsMaster()
+    {
+      pushactivity sut = getActivity(baseRefDir: "ref/heads/master", repo: getSourceControlRepository(master_branch: "master"));
+      Assert.IsTrue(sut.IsStagingBranch);
+    }
+    [Test]
+    public void IsNotStagingIfRepoIsNull()
+    {
+      pushactivity sut = getActivity(baseRefDir: "ref/heads/master");
+      Assert.IsFalse(sut.IsStagingBranch);
+    }
+    [Test]
     public void BranchIsEmptyStringIfRefHasLT3Sections()
     {
       pushactivity sut = getActivity(refDir: "ref/testBranch");
@@ -67,9 +85,9 @@ namespace api.louisukiri.com.Tests.entity
     {
       return new VersionControlUser {email = email, name = name};
     }
-    private SourceControlRepository getSourceControlRepository(string url = "")
+    private SourceControlRepository getSourceControlRepository(string url = "", string master_branch="")
     {
-      return new SourceControlRepository {url = url};
+      return new SourceControlRepository {url = url, master_branch = master_branch};
     }
     #endregion
   }

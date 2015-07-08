@@ -22,7 +22,7 @@ namespace api.louisukiri.com.Extensions
     {
       if (actionContext.Request.Content == null)
       {
-        return SetActionParameter(actionContext, null); ;
+        return SetActionParameter(actionContext, null);
       }
       string payloadString = actionContext.Request.Content
         .ReadAsStringAsync()
@@ -56,7 +56,7 @@ namespace api.louisukiri.com.Extensions
       {
         case "push":
           return RequestTrigger.Push;
-        case "fork":
+        case "create":
           return RequestTrigger.Branch;
         case "pull":
           return RequestTrigger.Pull;

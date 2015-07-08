@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Net.Http.Headers;
-using cicd.domain.cicd.domain.abstracts;
-using cicdDomain.cicd.domain.abstracts;
 using System.Net.Http;
-using System.Threading.Tasks;
+using System.Net.Http.Headers;
+using cicdDomain.cicd.domain.abstracts;
+using cicdDomain.cicd.domain.entity;
 
-namespace cicdDomain.cicd.domain.entity
+namespace cicdDomain.cicd.domain.service
 {
   public class JenkinsBuildService: IBuildService
   {
@@ -48,13 +46,14 @@ namespace cicdDomain.cicd.domain.entity
         {
           var hasEmptyGitUrl = HasEmptyParameterValue(job, "GitUrl");
           var hasEmptyBranchName = HasEmptyParameterValue(job, "BranchName");
+          var hasEmptyEnvironment = HasEmptyParameterValue(job, "Environment");
           if (hasEmptyGitUrl)
           {
             var gitUrlPair = job.parameters
               .First(z => z.Key == "GitUrl"
                           && string.IsNullOrWhiteSpace(z.Value));
             job.parameters.Remove(gitUrlPair);
-            job.parameters.Add(new KeyValuePair<string, string>("GitUrl", Activity.repository.url));
+            job.parameters.Add(new KeyValuePair<string, string>("GitUrl", Activity.repository.clone_url));
           }
           if (hasEmptyBranchName)
           {
@@ -63,6 +62,14 @@ namespace cicdDomain.cicd.domain.entity
                           && string.IsNullOrWhiteSpace(z.Value));
             job.parameters.Remove(gitUrlPair);
             job.parameters.Add(new KeyValuePair<string, string>("BranchName", Activity.Branch));
+          }
+          if (hasEmptyEnvironment)
+          {
+            var gitUrlPair = job.parameters
+              .First(z => z.Key == "Environment"
+                          && string.IsNullOrWhiteSpace(z.Value));
+            job.parameters.Remove(gitUrlPair);
+            job.parameters.Add(new KeyValuePair<string, string>("Environment", Activity.IsStagingBranch?"staging":"development"));
           }
           HttpResponseMessage a = trigger(job.name, job.uri, job.path, job.parameters);
           job.AddRun(a.IsSuccessStatusCode, new List<string> { a.StatusCode.ToString() });

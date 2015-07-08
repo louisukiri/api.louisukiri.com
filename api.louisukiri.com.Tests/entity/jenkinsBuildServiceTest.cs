@@ -2,6 +2,7 @@
 using System.Linq;
 using cicdDomain.cicd.domain.abstracts;
 using cicdDomain.cicd.domain.entity;
+using cicdDomain.cicd.domain.service;
 using cicdDomain.cicd.infrastructure;
 using Moq;
 using NUnit.Framework;
@@ -93,6 +94,70 @@ namespace api.louisukiri.com.Tests.entity
       var res = sut.build(testJob, req);
 
       Assert.IsTrue(res.SuccesffullyRan);
+    }
+    [Test]
+    public void GivenJobWithEmptyEnvParamAndIsStagingAddStagEnvParam()
+    {
+      string paramKey = "Environment";
+      pushactivity req = new pushactivity { repository = new SourceControlRepository { url = "http://test.foo", master_branch = "master" }, base_ref = "ref/heads/master" };
+      Job testJob = new Job();
+      string env = "";
+      testJob.parameters.Add(new KeyValuePair<string, string>(paramKey, ""));
+      _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>()))
+          .Returns((string a, string b, string c, List<KeyValuePair<string, string>> d) =>
+          {
+            HttpResponseMessage msg = null;
+            var exists = d.Any(z => z.Key == paramKey && !string.IsNullOrWhiteSpace(z.Value));
+            if (exists)
+            {
+              msg = new HttpResponseMessage
+              {
+                StatusCode = System.Net.HttpStatusCode.OK
+              };
+              env = d[0].Value;
+            }
+            return msg ?? new HttpResponseMessage
+            {
+              StatusCode = System.Net.HttpStatusCode.BadRequest
+            };
+
+          }
+       );
+      var res = sut.build(testJob, req);
+      Assert.IsTrue(res.SuccesffullyRan);
+      Assert.AreEqual("staging", env);
+    }
+    [Test]
+    public void GivenJobWithEmptyEnvParamAndIsStagingAddDevEnvParam()
+    {
+      string paramKey = "Environment";
+      pushactivity req = new pushactivity { repository = new SourceControlRepository { url = "http://test.foo", master_branch = "master" }, base_ref = "ref/heads/master2" };
+      Job testJob = new Job();
+      string env = "";
+      testJob.parameters.Add(new KeyValuePair<string, string>(paramKey, ""));
+      _sut.Setup(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>()))
+          .Returns((string a, string b, string c, List<KeyValuePair<string, string>> d) =>
+          {
+            HttpResponseMessage msg = null;
+            var exists = d.Any(z => z.Key == paramKey && !string.IsNullOrWhiteSpace(z.Value));
+            if (exists)
+            {
+              msg = new HttpResponseMessage
+              {
+                StatusCode = System.Net.HttpStatusCode.OK
+              };
+              env = d[0].Value;
+            }
+            return msg ?? new HttpResponseMessage
+            {
+              StatusCode = System.Net.HttpStatusCode.BadRequest
+            };
+
+          }
+       );
+      var res = sut.build(testJob, req);
+      Assert.IsTrue(res.SuccesffullyRan);
+      Assert.AreEqual("development", env);
     }
     [Test]
     public void GivenJobWithEmptyBranchNameParameterAddBranchParameterFromJob()

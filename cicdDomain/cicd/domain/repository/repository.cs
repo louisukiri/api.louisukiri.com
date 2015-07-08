@@ -21,7 +21,8 @@ namespace cicdDomain.cicd.domain.repository
            ,parameters=new List<KeyValuePair<string,string>>(){
                   new KeyValuePair<string,string>("GitUrl","https://github.com/louisukiri/paper-angel.git"),
                   new KeyValuePair<string,string>("FriendlyName","louisukiri-paperAngel"),
-                  new KeyValuePair<string,string>("BranchName",string.Empty)
+                  new KeyValuePair<string,string>("BranchName",string.Empty),
+                  new KeyValuePair<string,string>("Environment",string.Empty)
                 }
               }
            },
@@ -33,7 +34,8 @@ namespace cicdDomain.cicd.domain.repository
            ,parameters=new List<KeyValuePair<string,string>>(){
                   new KeyValuePair<string,string>("GitUrl","https://github.com/louisukiri/paper-angel.git"),
                   new KeyValuePair<string,string>("FriendlyName","louisukiri-ci"),
-                  new KeyValuePair<string,string>("BranchName",string.Empty)
+                  new KeyValuePair<string,string>("BranchName",string.Empty),
+                  new KeyValuePair<string,string>("Environment",string.Empty)
                 }
               }
            },
@@ -45,7 +47,8 @@ namespace cicdDomain.cicd.domain.repository
            ,parameters=new List<KeyValuePair<string,string>>(){
                   new KeyValuePair<string,string>("GitUrl",string.Empty),
                   new KeyValuePair<string,string>("FriendlyName","louisukiri-ci"),
-                  new KeyValuePair<string,string>("BranchName",string.Empty)
+                  new KeyValuePair<string,string>("BranchName",string.Empty),
+                  new KeyValuePair<string,string>("Environment",string.Empty)
                 }
               }
            }

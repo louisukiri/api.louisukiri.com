@@ -46,24 +46,40 @@ namespace cicdDomain.cicd.domain.entity
                 ;
           }
         }
-
-      private bool isValidBranch
+      private bool isValidRef(string refString)
+      {
+        string[] split = refString.Split('/');
+        return split.Count() == 3 && split[1] == "heads";
+      }
+      public string BaseBranch
       {
         get
         {
-          string [] split = @ref.Split('/');
-          return split.Count() == 3 && split[1]=="heads";
+          if (!isValidRef(base_ref))
+          {
+            return string.Empty;
+          }
+          return base_ref.Split('/').Last();
         }
       }
       public string Branch
       {
         get
         {
-          if (!isValidBranch)
+          if (!isValidRef(@ref))
           {
             return string.Empty;
           }
           return @ref.Split('/').Last();
+        }
+      }
+
+      public bool IsStagingBranch {
+        get
+        {
+          return 
+            repository != null && 
+            BaseBranch.ToLower() == repository.master_branch.ToLower();
         }
       }
     }
