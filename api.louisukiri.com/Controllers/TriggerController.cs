@@ -26,7 +26,6 @@ namespace api.louisukiri.com.Controllers
           CICDService service = new CICDService();
           var result = service.run(value);
 
-            
           return !result.Failed? new HttpResponseMessage(HttpStatusCode.OK) 
             : new HttpResponseMessage(HttpStatusCode.NotFound) ;
         }

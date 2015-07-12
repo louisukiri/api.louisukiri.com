@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using cicdDomain.cicd.domain.abstracts;
@@ -17,7 +18,8 @@ namespace cicdDomain.cicd.domain.service
 
     public virtual HttpResponseMessage trigger(string name, string uri, string relativePath, List<KeyValuePair<string, string>> parameters=null)
     {
-      using (var client = new HttpClient())
+
+      using (var client = new HttpClient(new HttpClientHandler{ Credentials = new NetworkCredential(@"jomax\lukiri", "Vaneinstein4")}))
       {
         //"http://louisjenkins.dc1.corp.gd:8080/"
         client.BaseAddress = new Uri(uri);
@@ -28,12 +30,13 @@ namespace cicdDomain.cicd.domain.service
         if(parameters.Count > 0)
         {
             content = new FormUrlEncodedContent(parameters);
-            relativePath += "/buildWithParameters";
+            relativePath += "/buildWithParameters?token=testToken";
          }
         else
         {
             relativePath += "/build";
         }
+        
         //job/CI-Api/buildWithParameters
         return client.PostAsync(relativePath, content).Result;
 
