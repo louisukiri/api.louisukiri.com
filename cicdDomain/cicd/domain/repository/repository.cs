@@ -39,6 +39,19 @@ namespace cicdDomain.cicd.domain.repository
                 }
               }
            },
+           {"http-louisjenkins-dc1-corp-gd-8080-push", new Job(){
+           name="louisukiri-ci"
+           ,uri="http://louisjenkins.dc1.corp.gd:8080/"
+           ,path="job/CI-Api"
+           //,vcUrl = ""
+           ,parameters=new List<KeyValuePair<string,string>>(){
+                  new KeyValuePair<string,string>("GitUrl","https://github.com/louisukiri/paper-angel.git"),
+                  new KeyValuePair<string,string>("FriendlyName","louisukiri-ci"),
+                  new KeyValuePair<string,string>("BranchName",string.Empty),
+                  new KeyValuePair<string,string>("Environment",string.Empty)
+                }
+              }
+           },
            {"https-github-secureserver-net-domainapplications-dcc5-branch", new Job(){
            name="dcc5-ci"
            ,uri="http://g1dwtfsbuild008.jomax.paholdings.com/"

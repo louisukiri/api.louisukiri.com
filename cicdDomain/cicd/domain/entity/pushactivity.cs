@@ -48,6 +48,8 @@ namespace cicdDomain.cicd.domain.entity
         }
       private bool isValidRef(string refString)
       {
+        if (refString == null)
+              return false;
         string[] split = refString.Split('/');
         return split.Count() == 3 && split[1] == "heads";
       }
@@ -79,6 +81,7 @@ namespace cicdDomain.cicd.domain.entity
         {
           return 
             repository != null && 
+            repository.master_branch != null &&
             BaseBranch.ToLower() == repository.master_branch.ToLower();
         }
       }

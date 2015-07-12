@@ -55,7 +55,11 @@ namespace cicdDomain.cicd.domain.service
       {
           return job;
       }
-      return BuildService.build(job, request.Activity);
+        if (request.Activity.type == RequestTrigger.Branch)
+        {
+            return BuildService.buildSeed(job, request.Activity);
+        }
+        return BuildService.buildPush(job, request.Activity);
     }
 
     public IDomainResult run(RequestPayload rqPayload)
