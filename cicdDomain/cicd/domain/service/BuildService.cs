@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using cicdDomain.cicd.domain.abstracts;
 using cicdDomain.cicd.domain.entity;
+using cicdDomain.cicd.infrastructure;
 
 namespace cicdDomain.cicd.domain.service
 {
@@ -16,7 +17,7 @@ namespace cicdDomain.cicd.domain.service
     {
     }
 
-    public virtual HttpResponseMessage trigger(string name, string uri, string relativePath, List<KeyValuePair<string, string>> parameters=null)
+    public virtual HttpResponseMessage trigger(string name, string uri, string relativePath, List<KeyValuePair<string, string>> parameters=null, string authToken="")
     {
 
       using (var client = new HttpClient(new HttpClientHandler{ Credentials = new NetworkCredential(@"jomax\lukiri", "Vaneinstein4")}))
@@ -30,13 +31,16 @@ namespace cicdDomain.cicd.domain.service
         if(parameters.Count > 0)
         {
             content = new FormUrlEncodedContent(parameters);
-            relativePath += "/buildWithParameters?token=testToken";
+            relativePath += "/buildWithParameters";
          }
         else
         {
             relativePath += "/build";
         }
-        
+        if (!string.IsNullOrWhiteSpace(authToken))
+        {
+              relativePath += "?token=" + authToken;
+        }
         //job/CI-Api/buildWithParameters
         return client.PostAsync(relativePath, content).Result;
 
@@ -48,7 +52,7 @@ namespace cicdDomain.cicd.domain.service
         try
         {
           SetJobParameters(job, Activity);
-          HttpResponseMessage a = trigger(job.name, job.uri, job.path, job.parameters);
+          HttpResponseMessage a = trigger(job.name, job.uri, job.path, job.parameters, job.authToken);
           job.AddRun(a.IsSuccessStatusCode, new List<string> { a.StatusCode.ToString() });
         }
         catch(Exception ex)
@@ -62,7 +66,7 @@ namespace cicdDomain.cicd.domain.service
         try
         {
             SetJobParameters(job, activity);
-            HttpResponseMessage a = trigger(job.name, job.uri, "job/"+GetBuildProjectName(job), job.parameters);
+            HttpResponseMessage a = trigger(job.name, job.uri, "job/"+GetBuildProjectName(activity), job.parameters, job.authToken);
             job.AddRun(a.IsSuccessStatusCode, new List<string> { a.StatusCode.ToString() });
         }
         catch (Exception ex)
@@ -76,13 +80,15 @@ namespace cicdDomain.cicd.domain.service
         if (Activity.repository != null) job.parameters.SetIfEmtpy("GitUrl", Activity.repository.clone_url);
         job.parameters.SetIfEmtpy("BranchName", Activity.Branch??"");
         job.parameters.SetIfEmtpy("Environment", Activity.IsStagingBranch ? "staging" : "development");
-        
-        job.parameters.Add(new KeyValuePair<string, string>("JobName", GetBuildProjectName(job)));
+        job.parameters.Add(new KeyValuePair<string, string>("DevJobName","Dev"));
+        if (Activity.type == RequestTrigger.Branch)
+        {
+            job.parameters.Add(new KeyValuePair<string, string>("JobName", GetBuildProjectName(Activity)));
+        }
     }
-    public string GetBuildProjectName(Job testJob)
+    public string GetBuildProjectName(pushactivity activity)
     {
-
-        return "DOM-SITES-"+testJob.name??"NONAME";
+        return "DOM-SITES-"+activity.Branch??"NONAME";
     }
   }
     public static class ListKeyValueExtension

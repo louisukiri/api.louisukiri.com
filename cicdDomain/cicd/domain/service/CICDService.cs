@@ -71,7 +71,11 @@ namespace cicdDomain.cicd.domain.service
       var result = trigger(rqPayload);
       if (!result.SuccesffullyRan)
       {
-        return ResultFactory.FailResult("invalid job");
+        return ResultFactory.FailResult(result.LastExecution != null &&
+            result.LastExecution.Messages.Any()?
+            result.LastExecution.Messages.First()
+            : "Unknown Error"
+            );
       }
       return ResultFactory.getJobResult(result);
     }

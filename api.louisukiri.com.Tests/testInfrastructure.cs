@@ -37,6 +37,28 @@ namespace cicdDomain
     {
         return new RequestPayload(triggerType, testInfrastructure.GitHubPushContent);
     }
+    public static pushactivity GetOtherBranchActivity
+    {
+        get
+        {
+            return new pushactivity
+            {
+                repository = new SourceControlRepository { url = "http://test.foo", master_branch = "master" },
+                base_ref = null
+            };
+        }
+    }
+    public static pushactivity GetMasterBranchActivity
+    {
+        get
+        {
+          return new pushactivity
+          {
+              repository = new SourceControlRepository {url = "http://test.foo", master_branch = "master"},
+              base_ref = "ref/heads/master"
+          };
+        }
+      }
     #region Push Content
 
     public static string GitHubPushContent = @"
@@ -505,7 +527,7 @@ namespace cicdDomain
 //";
 
     #endregion
-      #region Branch Content
+    #region Branch Content
 
     public static string GitHubBranchContent = @"
 {

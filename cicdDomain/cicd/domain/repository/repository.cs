@@ -56,12 +56,23 @@ namespace cicdDomain.cicd.domain.repository
            name="dcc5-ci"
            ,uri="http://g1dwtfsbuild008.jomax.paholdings.com/"
            ,path="job/DOM-Sites-DCC-5-Seed"
+           ,authToken = "tokenforApi"
            //,vcUrl = ""
            ,parameters=new List<KeyValuePair<string,string>>(){
                   new KeyValuePair<string,string>("GitUrl","https://github.secureserver.net/DomainApplications/DCC5.git"),
                   new KeyValuePair<string,string>("FriendlyName","dcc5-ci"),
                   new KeyValuePair<string,string>("BranchName",string.Empty),
                   new KeyValuePair<string,string>("Environment",string.Empty)
+                }
+              }
+           },
+           {"https-github-secureserver-net-domainapplications-dcc5-push", new Job(){
+           name="dcc5-ci"
+           ,uri="http://g1dwtfsbuild008.jomax.paholdings.com/"
+           ,path="job/DOM-Sites-DCC-5-Seed"
+           , authToken = "tokenforApi"
+           //,vcUrl = ""
+           ,parameters=new List<KeyValuePair<string,string>>(){
                 }
               }
            },
@@ -75,6 +86,19 @@ namespace cicdDomain.cicd.domain.repository
                   new KeyValuePair<string,string>("FriendlyName","louisukiri-ci"),
                   new KeyValuePair<string,string>("BranchName",string.Empty),
                   new KeyValuePair<string,string>("Environment",string.Empty)
+                }
+              }
+           },
+           {"https-github-secureserver-net-lukiri-ci-push", new Job(){
+           name="louisukiri-ci"
+           ,uri="http://louisjenkins.dc1.corp.gd:8080/"
+           ,path="job/CI-Api"
+           //,vcUrl = "https://github.secureserver.net/lukiri/CI/"
+           ,parameters=new List<KeyValuePair<string,string>>(){
+                  //new KeyValuePair<string,string>("GitUrl",string.Empty),
+                  //new KeyValuePair<string,string>("FriendlyName","louisukiri-ci"),
+                  //new KeyValuePair<string,string>("BranchName",string.Empty),
+                  //new KeyValuePair<string,string>("Environment",string.Empty)
                 }
               }
            }
