@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace cicdDomain.cicd.domain.entity
 {
+    //TODO: Consider adding a constructor that sets defaults on master_branch. This will remove null checks from pushactivity class
     public class SourceControlRepository
     {
       public string id { get; set; }

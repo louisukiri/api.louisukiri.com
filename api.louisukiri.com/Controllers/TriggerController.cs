@@ -15,9 +15,10 @@ namespace api.louisukiri.com.Controllers
 {
     public class TriggersController : ApiController
     {
-        [Route("api/v1/test"), HttpGet]
+        [Route("api/v1/test"), HttpPost]
         public string test()
         {
+            var req = this.Request;
             return "ok jim";
         }
         [Route("api/v1/push"), HttpPost]

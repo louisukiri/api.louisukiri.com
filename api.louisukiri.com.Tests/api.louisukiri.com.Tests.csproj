@@ -67,6 +67,9 @@
       <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.13.0\lib\net45\Octokit.dll</HintPath>
+    </Reference>
     <Reference Include="Swashbuckle.Core">
       <HintPath>..\packages\Swashbuckle.Core.5.1.5\lib\net40\Swashbuckle.Core.dll</HintPath>
     </Reference>
@@ -122,6 +125,7 @@
     <Compile Include="cicdservicetest.cs" />
     <Compile Include="service\cicdApplicationserviceTest.cs" />
     <Compile Include="testInfrastructure.cs" />
+    <Compile Include="GitHubIntegrationTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\api.louisukiri.com\api.louisukiri.com.csproj">

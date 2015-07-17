@@ -37,6 +37,28 @@ namespace cicdDomain
     {
         return new RequestPayload(triggerType, testInfrastructure.GitHubPushContent);
     }
+    public static pushactivity GetOtherBranchActivity
+    {
+        get
+        {
+            return new pushactivity
+            {
+                repository = new SourceControlRepository { url = "http://test.foo", master_branch = "master" },
+                base_ref = null
+            };
+        }
+    }
+    public static pushactivity GetMasterBranchActivity
+    {
+        get
+        {
+          return new pushactivity
+          {
+              repository = new SourceControlRepository {url = "http://test.foo", master_branch = "master"},
+              base_ref = "ref/heads/master"
+          };
+        }
+      }
     #region Push Content
 
     public static string GitHubPushContent = @"
@@ -505,5 +527,173 @@ namespace cicdDomain
 //";
 
     #endregion
+    #region Branch Content
+
+    public static string GitHubBranchContent = @"
+{
+  'ref': 'refs/heads/test',
+  'before': 'f7055ca74d42451d6a2862426f36e7f415cb591d',
+  'after': '9d6efe51930113ff08ab59ed2ae49315cb3a0a69',
+  'created': true,
+  'deleted': false,
+  'forced': false,
+  'base_ref': 'refs/heads/master',
+  'compare': 'https://github.secureserver.net/lukiri/CI/compare/f7055ca74d42...9d6efe519301',
+  'commits': [
+    {
+      'id': '9d6efe51930113ff08ab59ed2ae49315cb3a0a69',
+      'distinct': true,
+      'message': 'test git call\n\ntest get call',
+      'timestamp': '2015-06-30T17:16:46-05:00',
+      'url': 'https://github.secureserver.net/lukiri/CI/commit/9d6efe51930113ff08ab59ed2ae49315cb3a0a69',
+      'author': {
+        'name': 'Louis Ukiri',
+        'email': 'lukiri@godaddy.com',
+        'username': 'lukiri'
+      },
+      'committer': {
+        'name': 'Louis Ukiri',
+        'email': 'lukiri@godaddy.com',
+        'username': 'lukiri'
+      },
+      'added': [
+
+      ],
+      'removed': [
+
+      ],
+      'modified': [
+        'testDoc.html'
+      ]
+    }
+  ],
+  'head_commit': {
+    'id': '9d6efe51930113ff08ab59ed2ae49315cb3a0a69',
+    'distinct': true,
+    'message': 'test git call\n\ntest get call',
+    'timestamp': '2015-06-30T17:16:46-05:00',
+    'url': 'https://github.secureserver.net/lukiri/CI/commit/9d6efe51930113ff08ab59ed2ae49315cb3a0a69',
+    'author': {
+      'name': 'Louis Ukiri',
+      'email': 'lukiri@godaddy.com',
+      'username': 'lukiri'
+    },
+    'committer': {
+      'name': 'Louis Ukiri',
+      'email': 'lukiri@godaddy.com',
+      'username': 'lukiri'
+    },
+    'added': [
+
+    ],
+    'removed': [
+
+    ],
+    'modified': [
+      'testDoc.html'
+    ]
+  },
+  'repository': {
+    'id': 9603,
+    'name': 'CI',
+    'full_name': 'lukiri/CI',
+    'owner': {
+      'name': 'lukiri',
+      'email': 'lukiri@godaddy.com'
+    },
+    'private': false,
+    'html_url': 'https://github.secureserver.net/lukiri/CI',
+    'description': '',
+    'fork': false,
+    'url': 'https://github.secureserver.net/lukiri/CI',
+    'forks_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/forks',
+    'keys_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/keys{/key_id}',
+    'collaborators_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/collaborators{/collaborator}',
+    'teams_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/teams',
+    'hooks_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/hooks',
+    'issue_events_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/issues/events{/number}',
+    'events_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/events',
+    'assignees_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/assignees{/user}',
+    'branches_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/branches{/branch}',
+    'tags_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/tags',
+    'blobs_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/git/blobs{/sha}',
+    'git_tags_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/git/tags{/sha}',
+    'git_refs_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/git/refs{/sha}',
+    'trees_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/git/trees{/sha}',
+    'statuses_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/statuses/{sha}',
+    'languages_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/languages',
+    'stargazers_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/stargazers',
+    'contributors_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/contributors',
+    'subscribers_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/subscribers',
+    'subscription_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/subscription',
+    'commits_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/commits{/sha}',
+    'git_commits_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/git/commits{/sha}',
+    'comments_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/comments{/number}',
+    'issue_comment_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/issues/comments{/number}',
+    'contents_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/contents/{+path}',
+    'compare_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/compare/{base}...{head}',
+    'merges_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/merges',
+    'archive_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/{archive_format}{/ref}',
+    'downloads_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/downloads',
+    'issues_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/issues{/number}',
+    'pulls_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/pulls{/number}',
+    'milestones_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/milestones{/number}',
+    'notifications_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/notifications{?since,all,participating}',
+    'labels_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/labels{/name}',
+    'releases_url': 'https://github.secureserver.net/api/v3/repos/lukiri/CI/releases{/id}',
+    'created_at': 1430142416,
+    'updated_at': '2015-06-22T21:17:40Z',
+    'pushed_at': 1435702634,
+    'git_url': 'git://github.secureserver.net/lukiri/CI.git',
+    'ssh_url': 'git@github.secureserver.net:lukiri/CI.git',
+    'clone_url': 'https://github.secureserver.net/lukiri/CI.git',
+    'svn_url': 'https://github.secureserver.net/lukiri/CI',
+    'homepage': null,
+    'size': 105,
+    'stargazers_count': 0,
+    'watchers_count': 0,
+    'language': 'HTML',
+    'has_issues': true,
+    'has_downloads': true,
+    'has_wiki': true,
+    'has_pages': false,
+    'forks_count': 0,
+    'mirror_url': null,
+    'open_issues_count': 0,
+    'forks': 0,
+    'open_issues': 0,
+    'watchers': 0,
+    'default_branch': 'master',
+    'stargazers': 0,
+    'master_branch': 'master'
+  },
+  'pusher': {
+    'name': 'lukiri',
+    'email': 'lukiri@godaddy.com'
+  },
+  'sender': {
+    'login': 'lukiri',
+    'id': 1460,
+    'avatar_url': 'https://github.secureserver.net/avatars/u/1460?',
+    'gravatar_id': '',
+    'url': 'https://github.secureserver.net/api/v3/users/lukiri',
+    'html_url': 'https://github.secureserver.net/lukiri',
+    'followers_url': 'https://github.secureserver.net/api/v3/users/lukiri/followers',
+    'following_url': 'https://github.secureserver.net/api/v3/users/lukiri/following{/other_user}',
+    'gists_url': 'https://github.secureserver.net/api/v3/users/lukiri/gists{/gist_id}',
+    'starred_url': 'https://github.secureserver.net/api/v3/users/lukiri/starred{/owner}{/repo}',
+    'subscriptions_url': 'https://github.secureserver.net/api/v3/users/lukiri/subscriptions',
+    'organizations_url': 'https://github.secureserver.net/api/v3/users/lukiri/orgs',
+    'repos_url': 'https://github.secureserver.net/api/v3/users/lukiri/repos',
+    'events_url': 'https://github.secureserver.net/api/v3/users/lukiri/events{/privacy}',
+    'received_events_url': 'https://github.secureserver.net/api/v3/users/lukiri/received_events',
+    'type': 'User',
+    'site_admin': false,
+    'ldap_dn': 'CN=Louis Ukiri,OU=Iowa Developers,OU=Users & Groups,OU=GoDaddy,DC=dc1,DC=corp,DC=gd'
+  }
+}
+";
+
+      #endregion
   }
 }

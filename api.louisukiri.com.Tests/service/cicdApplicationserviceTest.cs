@@ -19,14 +19,17 @@ namespace api.louisukiri.com.Tests.service
         Mock<IBuildService> _buildService;
         Mock<IRequestFactory> _requestFactory;
 
-      public RequestPayload request;
+        public RequestPayload request
+        {
+            get { return new RequestPayload(RequestTrigger.Push, testInfrastructure.GitHubPushContent); }
+        }
+
         [TestFixtureSetUp]
         public void setup()
         {
             _jobRepo = new Mock<IJobRepo>();
             _buildService = new Mock<IBuildService>();
           _requestFactory = new Mock<IRequestFactory>();
-          request = new RequestPayload(RequestTrigger.Push, testInfrastructure.GitHubPushContent);
         }
         [Test]
         public void CicdApplicationServiceRequiresJobRepo()
@@ -47,20 +50,62 @@ namespace api.louisukiri.com.Tests.service
           Assert.IsNotNull(sut.RequestFactory);
         }
         [Test]
-        public void WhenRepoReturnsJobWithExceptionReturnJobWithException()
+        public void WhenTriggerAndRepoReturnsJobWithExceptionReturnJobWithException()
         {
-          string id = "testID";
-          _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
-              .Returns(testInfrastructure.getJob(false));
+            string id = "testID";
+            _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
+                .Returns(testInfrastructure.getJob(false));
 
-          CICDService sut = getCICDService();
-          var res = sut.trigger(request);
+            CICDService sut = getCICDService();
+            var res = sut.trigger(request);
 
-          Assert.IsFalse(res.LastExecution.isSuccessful);
-          Assert.IsTrue(res.LastExecution.Messages.Count > 0);
+            Assert.IsFalse(res.LastExecution.isSuccessful);
+            Assert.IsTrue(res.LastExecution.Messages.Count > 0);
         }
         [Test]
-        public void WhenRequestIsNullReturnJobWithException()
+        public void WhenTriggerAndIsBranchActivityCallBuildSeed()
+        {
+            string id = "testID";
+            _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
+                .Returns(testInfrastructure.getJob(true));
+            _buildService.Setup(z => z.buildSeed(It.IsAny<Job>(), It.IsAny<pushactivity>()));
+
+            CICDService sut = getCICDService();
+            var branchrequest = new RequestPayload(RequestTrigger.Branch, testInfrastructure.GitHubBranchContent);
+            var res = sut.trigger(branchrequest);
+
+            _buildService.Verify(z => z.buildSeed(It.IsAny<Job>(), It.IsAny<pushactivity>()));
+        }
+        [Test]
+        public void WhenTriggerAndIsPushActivityCallBuildPush()
+        {
+            string id = "testID";
+            _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
+                .Returns(testInfrastructure.getJob(true));
+            _buildService.Setup(z => z.buildPush(It.IsAny<Job>(), It.IsAny<pushactivity>()));
+
+            //request = new RequestPayload(RequestTrigger.Push, testInfrastructure.GitHubPushContent);
+            CICDService sut = getCICDService();
+            var res = sut.trigger(request);
+
+            _buildService.Verify(z => z.buildPush(It.IsAny<Job>(), It.IsAny<pushactivity>()));
+        }
+        [Test]
+        public void WhenTriggerAndIsPullActivityCallBuildTests()
+        {
+            string id = "testID";
+            _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
+                .Returns(testInfrastructure.getJob(true));
+            _buildService.Setup(z => z.buildPush(It.IsAny<Job>(), It.IsAny<pushactivity>()));
+
+            //request = new RequestPayload(RequestTrigger.Push, testInfrastructure.GitHubPushContent);
+            CICDService sut = getCICDService();
+            var res = sut.trigger(request);
+
+            _buildService.Verify(z => z.buildPush(It.IsAny<Job>(), It.IsAny<pushactivity>()));
+        }
+        [Test]
+        public void WhenTriggerAndRequestIsNullReturnJobWithException()
         {
           string id = "testID";
           _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
@@ -78,12 +123,12 @@ namespace api.louisukiri.com.Tests.service
             string id = "testID";
             _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
                 .Returns(testInfrastructure.getJob(false));
-            _buildService.Setup(z => z.build(It.IsAny<Job>(), It.IsAny<pushactivity>()));
+            _buildService.Setup(z => z.buildSeed(It.IsAny<Job>(), It.IsAny<pushactivity>()));
 
             CICDService sut = getCICDService();
             var res = sut.trigger(request);
 
-            _buildService.Verify(z => z.build(It.IsAny<Job>(),It.IsAny<pushactivity>()), Times.Never());
+            _buildService.Verify(z => z.buildSeed(It.IsAny<Job>(),It.IsAny<pushactivity>()), Times.Never());
         }
         [Test, Ignore]
         public void WhenCallingRunReturnInvalidResultIfPayloadStringNullOrEmpty()

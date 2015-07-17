@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using cicdDomain.cicd.domain.abstracts;
 using cicdDomain.cicd.domain.entity;
+using cicdDomain.cicd.infrastructure;
 
 namespace cicdDomain.cicd.domain.service
 {
@@ -16,7 +17,7 @@ namespace cicdDomain.cicd.domain.service
     {
     }
 
-    public virtual HttpResponseMessage trigger(string name, string uri, string relativePath, List<KeyValuePair<string, string>> parameters=null)
+    public virtual HttpResponseMessage trigger(string name, string uri, string relativePath, List<KeyValuePair<string, string>> parameters=null, string authToken="")
     {
 
       using (var client = new HttpClient(new HttpClientHandler{ Credentials = new NetworkCredential(@"jomax\lukiri", "Vaneinstein4")}))
@@ -30,71 +31,85 @@ namespace cicdDomain.cicd.domain.service
         if(parameters.Count > 0)
         {
             content = new FormUrlEncodedContent(parameters);
-            relativePath += "/buildWithParameters?token=testToken";
+            relativePath += "/buildWithParameters";
          }
         else
         {
             relativePath += "/build";
         }
-        
+        if (!string.IsNullOrWhiteSpace(authToken))
+        {
+              relativePath += "?token=" + authToken;
+        }
         //job/CI-Api/buildWithParameters
         return client.PostAsync(relativePath, content).Result;
 
       }
     }
 
-    public Job build(Job job, pushactivity Activity)
+    public Job buildSeed(Job job, pushactivity Activity)
     {
         try
         {
-          var hasEmptyGitUrl = HasEmptyParameterValue(job, "GitUrl");
-          var hasEmptyBranchName = HasEmptyParameterValue(job, "BranchName");
-          var hasEmptyEnvironment = HasEmptyParameterValue(job, "Environment");
-          if (hasEmptyGitUrl)
-          {
-            var gitUrlPair = job.parameters
-              .First(z => z.Key == "GitUrl"
-                          && string.IsNullOrWhiteSpace(z.Value));
-            job.parameters.Remove(gitUrlPair);
-            job.parameters.Add(new KeyValuePair<string, string>("GitUrl", Activity.repository.clone_url));
-          }
-          if (hasEmptyBranchName)
-          {
-            var gitUrlPair = job.parameters
-              .First(z => z.Key == "BranchName"
-                          && string.IsNullOrWhiteSpace(z.Value));
-            job.parameters.Remove(gitUrlPair);
-            job.parameters.Add(new KeyValuePair<string, string>("BranchName", Activity.Branch));
-          }
-          if (hasEmptyEnvironment)
-          {
-            var gitUrlPair = job.parameters
-              .First(z => z.Key == "Environment"
-                          && string.IsNullOrWhiteSpace(z.Value));
-            job.parameters.Remove(gitUrlPair);
-            job.parameters.Add(new KeyValuePair<string, string>("Environment", Activity.IsStagingBranch?"staging":"development"));
-          }
-          HttpResponseMessage a = trigger(job.name, job.uri, job.path, job.parameters);
+          SetJobParameters(job, Activity);
+          HttpResponseMessage a = trigger(job.name, job.uri, job.path, job.parameters, job.authToken);
           job.AddRun(a.IsSuccessStatusCode, new List<string> { a.StatusCode.ToString() });
         }
         catch(Exception ex)
         {
             job.AddRun(false, new List<string> { ex.Message });
         }
-
-        
+        return job;
+    }
+    public Job buildPush(Job job, pushactivity activity)
+    {
+        try
+        {
+            SetJobParameters(job, activity);
+            HttpResponseMessage a = trigger(job.name, job.uri, DevJobName, job.parameters, job.authToken);
+            job.AddRun(a.IsSuccessStatusCode, new List<string> { a.StatusCode.ToString() });
+        }
+        catch (Exception ex)
+        {
+            job.AddRun(false, new List<string> { ex.Message });
+        }
         return job;
     }
 
-    private static bool HasEmptyParameterValue(Job job, string Key)
-    {
-      if (string.IsNullOrWhiteSpace(Key))
+      private string DevJobName
       {
-        return false;
+          get { return "job/DOM-SITES-DEV-BUILD"; }
       }
-      return job.parameters
-        .Any(z => z.Key == Key
-                  && string.IsNullOrWhiteSpace(z.Value));
+    private void SetJobParameters(Job job, pushactivity Activity)
+    {
+        if (Activity.repository != null) job.parameters.SetIfEmtpy("GitUrl", Activity.repository.clone_url);
+        job.parameters.SetIfEmtpy("BranchName", Activity.Branch??"");
+        job.parameters.SetIfEmtpy("Environment", Activity.IsStagingBranch ? "staging" : "development");
+        job.parameters.Add(new KeyValuePair<string, string>("DevJobName","Dev"));
+        if (Activity.type == RequestTrigger.Branch)
+        {
+            job.parameters.Add(new KeyValuePair<string, string>("JobName", GetBuildProjectName(Activity)));
+        }
+    }
+    public string GetBuildProjectName(pushactivity activity)
+    {
+        return "DOM-SITES-"+activity.Branch??"NONAME";
     }
   }
+    public static class ListKeyValueExtension
+    {
+        public static void SetIfEmtpy(this List<KeyValuePair<string, string>> pairs, string key, string value)
+        {
+            var gitUrlPair = pairs
+                .Where(z => z.Key == key
+                            && string.IsNullOrWhiteSpace(z.Value));
+            var keyValuePairs = gitUrlPair as KeyValuePair<string, string>[] ?? gitUrlPair.ToArray();
+            if (gitUrlPair != null && !keyValuePairs.Any())
+            {
+                return;
+            }
+            pairs.Remove(keyValuePairs.First());
+            pairs.Add(new KeyValuePair<string, string>(key, value));
+        }
+    }
 }
