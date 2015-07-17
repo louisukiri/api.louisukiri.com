@@ -66,7 +66,7 @@ namespace cicdDomain.cicd.domain.service
         try
         {
             SetJobParameters(job, activity);
-            HttpResponseMessage a = trigger(job.name, job.uri, "job/"+GetBuildProjectName(activity), job.parameters, job.authToken);
+            HttpResponseMessage a = trigger(job.name, job.uri, DevJobName, job.parameters, job.authToken);
             job.AddRun(a.IsSuccessStatusCode, new List<string> { a.StatusCode.ToString() });
         }
         catch (Exception ex)
@@ -75,6 +75,11 @@ namespace cicdDomain.cicd.domain.service
         }
         return job;
     }
+
+      private string DevJobName
+      {
+          get { return "job/DOM-SITES-DEV-BUILD"; }
+      }
     private void SetJobParameters(Job job, pushactivity Activity)
     {
         if (Activity.repository != null) job.parameters.SetIfEmtpy("GitUrl", Activity.repository.clone_url);

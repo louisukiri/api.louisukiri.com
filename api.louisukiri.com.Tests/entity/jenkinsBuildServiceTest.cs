@@ -161,7 +161,7 @@ namespace api.louisukiri.com.Tests.entity
         Assert.IsTrue(testJob.parameters.Any(z => z.Key == "DevJobName"));
     }
     [Test]
-    public void BuildPushdAndTriggerReturns200AddSuccessfulLastExecution()
+    public void BuildPushAndTriggerReturns200AddSuccessfulLastExecution()
     {
         Job testJob = new Job();
         SetTriggerMethod();
@@ -171,14 +171,15 @@ namespace api.louisukiri.com.Tests.entity
         Assert.IsTrue(res.SuccesffullyRan);
     }
     [Test]
-    public void BuildPushdCallTriggerWithJobNameAsPath()
+    public void BuildPushForDevBranchCallsStaticJobPath()
     {
-        Job testJob = new Job{ name = "Test"};
-        SetTriggerMethod("job/DOM-SITES-Test");
+        string staticDevPath = "job/DOM-SITES-DEV-BUILD";
+        Job testJob = new Job();
+        SetTriggerMethod();
 
-        var res = sut.buildPush(testJob, new pushactivity{ @ref = "ref/heads/Test"});
+        var res = sut.buildPush(testJob, new pushactivity());
 
-        _sut.Verify(z => z.trigger(It.IsAny<string>(), It.IsAny<string>(), "job/DOM-SITES-Test", It.IsAny<List<KeyValuePair<string, string>>>(), It.IsAny<string>()));
+        _sut.Verify(z=> z.trigger(It.IsAny<string>(), It.IsAny<string>(), staticDevPath, It.IsAny<List<KeyValuePair<string, string>>>(), It.IsAny<string>()));
     }
     [Test]
     public void BuildPushAndTriggerReturnsNon200AddFailedLastExecution()

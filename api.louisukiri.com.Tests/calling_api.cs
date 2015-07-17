@@ -11,7 +11,7 @@ namespace api.louisukiri.com.Tests
     
     public class calling_api
     {
-        [Test]
+        [Test,Ignore]
         public void testWorks()
         {
             var server = new virtualServer();

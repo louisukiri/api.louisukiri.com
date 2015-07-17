@@ -55,10 +55,10 @@ namespace cicdDomain.cicd.domain.service
       {
           return job;
       }
-        if (request.Activity.type == RequestTrigger.Branch)
-        {
-            return BuildService.buildSeed(job, request.Activity);
-        }
+      if (request.Activity.type == RequestTrigger.Branch)
+      {
+          return BuildService.buildSeed(job, request.Activity);
+      }
         return BuildService.buildPush(job, request.Activity);
     }
 

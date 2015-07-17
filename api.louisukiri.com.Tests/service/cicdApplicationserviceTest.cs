@@ -91,6 +91,20 @@ namespace api.louisukiri.com.Tests.service
             _buildService.Verify(z => z.buildPush(It.IsAny<Job>(), It.IsAny<pushactivity>()));
         }
         [Test]
+        public void WhenTriggerAndIsPullActivityCallBuildTests()
+        {
+            string id = "testID";
+            _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
+                .Returns(testInfrastructure.getJob(true));
+            _buildService.Setup(z => z.buildPush(It.IsAny<Job>(), It.IsAny<pushactivity>()));
+
+            //request = new RequestPayload(RequestTrigger.Push, testInfrastructure.GitHubPushContent);
+            CICDService sut = getCICDService();
+            var res = sut.trigger(request);
+
+            _buildService.Verify(z => z.buildPush(It.IsAny<Job>(), It.IsAny<pushactivity>()));
+        }
+        [Test]
         public void WhenTriggerAndRequestIsNullReturnJobWithException()
         {
           string id = "testID";

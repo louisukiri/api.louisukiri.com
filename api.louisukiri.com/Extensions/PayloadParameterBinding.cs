@@ -58,7 +58,7 @@ namespace api.louisukiri.com.Extensions
           return RequestTrigger.Push;
         case "create":
           return RequestTrigger.Branch;
-        case "pull":
+        case "pull_request":
           return RequestTrigger.Pull;
       }
       return RequestTrigger.Unknown;

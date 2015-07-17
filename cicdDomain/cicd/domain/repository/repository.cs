@@ -55,11 +55,11 @@ namespace cicdDomain.cicd.domain.repository
            {"https-github-secureserver-net-domainapplications-dcc5-branch", new Job(){
            name="dcc5-ci"
            ,uri="http://g1dwtfsbuild008.jomax.paholdings.com/"
-           ,path="job/DOM-Sites-DCC-5-Seed"
+           ,path="job/DOM-SITES-DEV-BUILD"
            ,authToken = "tokenforApi"
            //,vcUrl = ""
            ,parameters=new List<KeyValuePair<string,string>>(){
-                  new KeyValuePair<string,string>("GitUrl","https://github.secureserver.net/DomainApplications/DCC5.git"),
+                  new KeyValuePair<string,string>("GitUrl","git@github.secureserver.net:DomainApplications/DCC5.git"),
                   new KeyValuePair<string,string>("FriendlyName","dcc5-ci"),
                   new KeyValuePair<string,string>("BranchName",string.Empty),
                   new KeyValuePair<string,string>("Environment",string.Empty)
@@ -69,17 +69,21 @@ namespace cicdDomain.cicd.domain.repository
            {"https-github-secureserver-net-domainapplications-dcc5-push", new Job(){
            name="dcc5-ci"
            ,uri="http://g1dwtfsbuild008.jomax.paholdings.com/"
-           ,path="job/DOM-Sites-DCC-5-Seed"
+           ,path="job/DOM-SITES-DEV-BUILD"
            , authToken = "tokenforApi"
            //,vcUrl = ""
            ,parameters=new List<KeyValuePair<string,string>>(){
+                  new KeyValuePair<string,string>("GitUrl","git@github.secureserver.net:DomainApplications/DCC5.git"),
+                  //new KeyValuePair<string,string>("FriendlyName","dcc5-ci"),
+                  new KeyValuePair<string,string>("BranchName",string.Empty)
+                  ,new KeyValuePair<string,string>("Environment",string.Empty)
                 }
               }
            },
            {"https-github-secureserver-net-lukiri-ci-branch", new Job(){
            name="louisukiri-ci"
            ,uri="http://louisjenkins.dc1.corp.gd:8080/"
-           ,path="job/CI-Api"
+           ,path="job/DOM-SITES-DEV-BUILD"
            //,vcUrl = "https://github.secureserver.net/lukiri/CI/"
            ,parameters=new List<KeyValuePair<string,string>>(){
                   new KeyValuePair<string,string>("GitUrl",string.Empty),
@@ -92,7 +96,7 @@ namespace cicdDomain.cicd.domain.repository
            {"https-github-secureserver-net-lukiri-ci-push", new Job(){
            name="louisukiri-ci"
            ,uri="http://louisjenkins.dc1.corp.gd:8080/"
-           ,path="job/CI-Api"
+           ,path="job/DOM-SITES-DEV-BUILD"
            //,vcUrl = "https://github.secureserver.net/lukiri/CI/"
            ,parameters=new List<KeyValuePair<string,string>>(){
                   //new KeyValuePair<string,string>("GitUrl",string.Empty),
