@@ -66,5 +66,7 @@ namespace cicdDomain.cicd.domain.entity
 
         public List<KeyValuePair<string, string>> parameters { get; set; }
         public string branch { get; set; }
+
+        public string authToken { get; set; }
     }
 }

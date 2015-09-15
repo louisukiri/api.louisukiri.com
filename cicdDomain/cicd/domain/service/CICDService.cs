@@ -55,7 +55,11 @@ namespace cicdDomain.cicd.domain.service
       {
           return job;
       }
-      return BuildService.build(job, request.Activity);
+      if (request.Activity.type == RequestTrigger.Branch)
+      {
+          return BuildService.buildSeed(job, request.Activity);
+      }
+        return BuildService.buildPush(job, request.Activity);
     }
 
     public IDomainResult run(RequestPayload rqPayload)
@@ -67,7 +71,11 @@ namespace cicdDomain.cicd.domain.service
       var result = trigger(rqPayload);
       if (!result.SuccesffullyRan)
       {
-        return ResultFactory.FailResult("invalid job");
+        return ResultFactory.FailResult(result.LastExecution != null &&
+            result.LastExecution.Messages.Any()?
+            result.LastExecution.Messages.First()
+            : "Unknown Error"
+            );
       }
       return ResultFactory.getJobResult(result);
     }
