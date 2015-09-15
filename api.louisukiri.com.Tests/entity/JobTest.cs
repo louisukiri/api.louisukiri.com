@@ -1,5 +1,5 @@
-﻿using Moq;
-using cicdDomain.cicd.domain.entity;
+﻿using cicd.domain.context.trigger.entity;
+using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System;

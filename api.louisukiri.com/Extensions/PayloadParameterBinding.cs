@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
-using System.Web.Http.ModelBinding;
-using cicdDomain.cicd.infrastructure;
+using cicd.infrastructure;
 
 namespace api.louisukiri.com.Extensions
 {
@@ -20,19 +16,14 @@ namespace api.louisukiri.com.Extensions
 
     public override Task ExecuteBindingAsync(System.Web.Http.Metadata.ModelMetadataProvider metadataProvider, HttpActionContext actionContext, System.Threading.CancellationToken cancellationToken)
     {
-      if (actionContext.Request.Content == null)
+      string paramName = Descriptor.ParameterName;
+      string payloadString = actionContext.GetRequestBody();
+      if (string.IsNullOrWhiteSpace(payloadString)
+          || (!actionContext.Request.Headers.Contains("X-GitHub-Event")
+                    || string.IsNullOrWhiteSpace(payloadString))
+          )
       {
-        return SetActionParameter(actionContext, null);
-      }
-      string payloadString = actionContext.Request.Content
-        .ReadAsStringAsync()
-        .Result
-        ;
-      if (!actionContext.Request.Headers.Contains("X-GitHub-Event")
-        || string.IsNullOrWhiteSpace(payloadString)
-        )
-      {
-        return SetActionParameter(actionContext, null);
+        return actionContext.SetActionParameter<RequestPayload>(paramName, null);
       }
       RequestTrigger triggerType = GetTriggerTypeFromHeader(actionContext);
       
@@ -41,11 +32,11 @@ namespace api.louisukiri.com.Extensions
       {
           payload = new RequestPayload(triggerType, payloadString);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        return SetActionParameter(actionContext, null);
+          return actionContext.SetActionParameter<RequestPayload>(paramName, null);
       }
-      return SetActionParameter(actionContext, payload);
+      return actionContext.SetActionParameter<RequestPayload>(paramName, payload);
     }
     private RequestTrigger GetTriggerTypeFromHeader(HttpActionContext actionContext)
     {
@@ -58,20 +49,10 @@ namespace api.louisukiri.com.Extensions
           return RequestTrigger.Push;
         case "create":
           return RequestTrigger.Branch;
-        case "pull":
+        case "pull_request":
           return RequestTrigger.Pull;
       }
       return RequestTrigger.Unknown;
-    }
-    private Task SetActionParameter(HttpActionContext actionContext, RequestPayload payload)
-    {
-      actionContext.ActionArguments[Descriptor.ParameterName] = payload;
-      //this is required so this method can exit at the point of invocation
-
-      var tsc = new TaskCompletionSource<object>();
-      tsc.SetResult(null);
-
-      return tsc.Task;
     }
   }
   public class PayloadParameterAttribute : ParameterBindingAttribute

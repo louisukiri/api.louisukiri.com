@@ -1,6 +1,6 @@
 ﻿using System;
+using cicd.infrastructure;
 using cicdDomain;
-using cicdDomain.cicd.infrastructure;
 using NUnit.Framework;
 
 namespace api.louisukiri.com.Tests.infrastructure
@@ -9,31 +9,52 @@ namespace api.louisukiri.com.Tests.infrastructure
   public class RequestPayloadTest
   {
     [Test]
-    public void throwWhenInitializedWithEmptyPayload()
+    public void ThrowWhenInitializedWithEmptyPayload()
     {
       Assert.Throws<ArgumentNullException>(delegate { var a = new RequestPayload(RequestTrigger.Pull, ""); });
     }
     [Test]
-    public void whenConstructionInitializeActivity()
+    public void WhenConstructionInitializeActivity()
     {
         var sut = testInfrastructure.getRequestPayload();
         Assert.IsNotNull(sut.Activity);
     }
     [Test]
-    public void whenConstructionInitializeRequestTrigger()
+    public void WhenConstructionInitializeRequestTrigger()
     {
         var sut = testInfrastructure.getRequestPayload();
         Assert.IsNotNull(sut.Trigger);
     }
     [Test]
-    public void whenConstructionInitializeThrowErrorIfTriggerIsUnexpected()
+    public void WhenConstructionInitializeThrowErrorIfTriggerIsUnexpected()
     {
         Assert.Throws<ArgumentException>(delegate { testInfrastructure.getRequestPayload(RequestTrigger.Pull); });
     }
     [Test]
-    public void whenConstructionInitializeThrowErrorIfActivityIsNull()
+    public void WhenConstructionInitializeThrowErrorIfActivityIsNull()
     {
         Assert.Throws<ArgumentException>(delegate { var a = new RequestPayload(RequestTrigger.Pull, "{'badjsonstring':'okjim'}"); });
+    }
+    [Test]
+    public void WhenCtorGivenPullPayloadPullPropertyNotNull()
+    {
+        var sut = testInfrastructure.getRequestPayload(testInfrastructure.GithubPullRequestContent, RequestTrigger.Pull);
+
+        Assert.IsNotNull(sut.Activity.pull_request);
+    }
+    [Test]
+    public void WhenCtorSetBranch()
+    {
+        var sut = testInfrastructure.getRequestPayload(testInfrastructure.GithubPullRequestContent, RequestTrigger.Pull);
+
+        Assert.AreNotEqual(default(RequestTrigger), sut.Branch);
+    }
+    [Test]
+    public void WhenCtorSetTrigger()
+    {
+        var sut = testInfrastructure.getRequestPayload(testInfrastructure.GithubPullRequestContent, RequestTrigger.Pull);
+
+        Assert.IsNotNull(sut.Trigger);
     }
   }
 }

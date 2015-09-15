@@ -1,25 +1,27 @@
-﻿using System;
-using cicdDomain.cicd.domain.entity;
-using cicdDomain.cicd.infrastructure;
+﻿
+using cicd.domain.context.trigger.entity;
+using cicd.infrastructure;
 using NUnit.Framework;
+using Octokit;
 
 namespace api.louisukiri.com.Tests.entity
 {
   [TestFixture]
   public class pushactivityTest
   {
+      [Test]
+      public void TypeReturnsPullIfPull_RequestExists()
+      {
+          pushactivity sut = getActivity(getVCUser("test@test.com", "test"), pullRequest: new GitHubPullRequest());
+
+          Assert.AreEqual(RequestTrigger.Pull, sut.type);
+      }
     [Test]
     public void TypeReturnsPushIfPusherExists()
     {
       pushactivity sut = getActivity(getVCUser("test@test.com","test"));
 
       Assert.AreEqual(RequestTrigger.Push, sut.type);
-    }
-    [Test]
-    public void TypeReturnsUnknownIfPushDoesntExist()
-    {
-      pushactivity sut = getActivity();
-      Assert.AreEqual(RequestTrigger.Unknown, sut.type);
     }
     [Test]
     public void TypeReturnsCreateIfCreatedIsTrueAndValidUser()
@@ -39,6 +41,12 @@ namespace api.louisukiri.com.Tests.entity
     {
       pushactivity sut = getActivity(refDir: "ref/heads/testBranch");
       Assert.AreEqual("testBranch", sut.Branch);
+    }
+    [Test]
+    public void BranchIsLastValueInFromHeadIfPullRequest()
+    {
+        pushactivity sut = getActivity(pullRequest: new GitHubPullRequest{ head = new RefHead{ @ref="ref/heads/test" }});
+        Assert.AreEqual("test", sut.Branch);
     }
     [Test]
     public void BaseBranchIsLastValueInBaseRefArray()
@@ -77,9 +85,9 @@ namespace api.louisukiri.com.Tests.entity
       Assert.AreEqual(string.Empty, sut.Branch);
     }
     #region private methods
-    private pushactivity getActivity(VersionControlUser user=null, bool created=false, SourceControlRepository repo=null, string refDir="", string baseRefDir="")
+    private pushactivity getActivity(VersionControlUser user=null, bool created=false, SourceControlRepository repo=null, string refDir="", string baseRefDir="", GitHubPullRequest pullRequest=null)
     {
-      return new pushactivity {pusher = user, created = created, repository = repo, @ref = refDir, base_ref = baseRefDir};
+      return new pushactivity {pusher = user, created = created, repository = repo, @ref = refDir, base_ref = baseRefDir, pull_request = pullRequest};
     }
     private VersionControlUser getVCUser(string email = "", string name = "")
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using cicd.domain.context.trigger.entity;
+using cicd.domain.context.trigger.factory;
+using cicd.infrastructure.dtos;
 using cicdDomain;
-using cicdDomain.cicd.domain.entity;
-using cicdDomain.cicd.domain.factory;
-using cicdDomain.cicd.infrastructure.dtos;
 using NUnit.Framework;
 
 namespace api.louisukiri.com.Tests.factory

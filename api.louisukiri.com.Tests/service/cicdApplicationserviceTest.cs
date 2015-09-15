@@ -1,32 +1,24 @@
-﻿
-
+﻿using System;
+using cicd.domain.context.trigger.abstracts;
+using cicd.domain.context.trigger.entity;
+using cicd.domain.context.trigger.services;
+using cicd.infrastructure;
+using cicd.infrastructure.dtos;
 using cicdDomain;
-using cicdDomain.cicd.domain.abstracts;
-using cicdDomain.cicd.domain.entity;
-using cicdDomain.cicd.domain.service;
-using cicdDomain.cicd.infrastructure;
-using cicdDomain.cicd.infrastructure.dtos;
 using Moq;
 using NUnit.Framework;
-using System;
+using Octokit;
 using System.Collections.Generic;
+
 namespace api.louisukiri.com.Tests.service
 {
     [TestFixture]
-    public partial class cicdApplicationserviceTest
+    public partial class cicdApplicationserviceTest : cicdAppServiceTestBase
     {
-        Mock<IJobRepo> _jobRepo;
-        Mock<IBuildService> _buildService;
-        Mock<IRequestFactory> _requestFactory;
-
-      public RequestPayload request;
-        [TestFixtureSetUp]
-        public void setup()
+        [SetUp]
+        public void _setup()
         {
-            _jobRepo = new Mock<IJobRepo>();
-            _buildService = new Mock<IBuildService>();
-          _requestFactory = new Mock<IRequestFactory>();
-          request = new RequestPayload(RequestTrigger.Push, testInfrastructure.GitHubPushContent);
+            base.setup();
         }
         [Test]
         public void CicdApplicationServiceRequiresJobRepo()
@@ -37,64 +29,118 @@ namespace api.louisukiri.com.Tests.service
         [Test]
         public void CicdApplicationServiceRequiresBuildService()
         {
-          CICDService sut = getCICDService();
-          Assert.IsNotNull(sut.BuildService);
+            CICDService sut = getCICDService();
+            Assert.IsNotNull(sut.BuildService);
         }
         [Test]
-        public void CicdApplicationServiceRequiresRequestFactory()
+        public void CicdApplicationServiceRequiresVcAppService()
         {
-          CICDService sut = getCICDService();
-          Assert.IsNotNull(sut.RequestFactory);
+            CICDService sut = getCICDService();
+            Assert.IsNotNull(sut.VersionControlService);
         }
         [Test]
-        public void WhenRepoReturnsJobWithExceptionReturnJobWithException()
+        public void CicdApplicationServiceRequiresCommunicationBot()
         {
-          string id = "testID";
-          _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
-              .Returns(testInfrastructure.getJob(false));
-
-          CICDService sut = getCICDService();
-          var res = sut.trigger(request);
-
-          Assert.IsFalse(res.LastExecution.isSuccessful);
-          Assert.IsTrue(res.LastExecution.Messages.Count > 0);
+            CICDService sut = getCICDService();
+            Assert.IsNotNull(sut.CommBot);
         }
         [Test]
-        public void WhenRequestIsNullReturnJobWithException()
+        public void WhenTriggerAndIsPushActivityCallBuildPushForEachJob()
         {
-          string id = "testID";
-          _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
-              .Returns(testInfrastructure.getJob(false));
+            base.setup();
+            _buildService.Setup(z => z.Build(It.IsAny<Job>(), It.IsAny<cicd.domain.context.trigger.entity.Branch>()));
+            IList<Job> listOfJobs = RandomNumberOfPushJobs();
+            _versionControlService.Setup(z => z.GetSettings(It.IsAny<cicd.domain.context.trigger.entity.Branch>()))
+                .Returns(new Settings()
+                {
+                    Jobs= listOfJobs
+                        
+                });
+            //request = new RequestPayload(RequestTrigger.Push, testInfrastructure.GitHubPushContent);
+            CICDService sut = getCICDService();
+            var testRequest =  request;
+            testRequest.Branch =
+                cicd.domain.context.trigger.entity.Branch.CreateFrom(testInfrastructure.GitHubPushActivity);
+            var res = sut.trigger(testRequest);
 
+            _buildService.Verify(z => z.Build(It.IsAny<Job>(), It.IsAny<cicd.domain.context.trigger.entity.Branch>()), Times.Exactly(listOfJobs.Count));
+        }
+
+        private IList<Job> RandomNumberOfPushJobs()
+        {
+            List<Job> jobs = new List<Job>();
+            int rand = new Random().Next(2,10);
+            for (int i = 0; i <= rand; i++)
+            {
+                jobs.Add(new Job(){Level = BranchLevel.Unknown, Trigger = RequestTrigger.Push});
+            }
+            return jobs;
+        }
+        [Test]
+        public void WhenTriggerGetSettings()
+        {
+            base.setup();
+            _buildService.Setup(z => z.Build(It.IsAny<Job>(), It.IsAny<cicd.domain.context.trigger.entity.Branch>()));
+            int jobs = SetupGetSettingsWithRandomNumberOfJobs();
+
+            DoSutTrigger();
+
+            _versionControlService.Verify(z => z.GetSettings(It.IsAny<cicd.domain.context.trigger.entity.Branch>()), Times.Once());
+        }
+        [Test]
+        public void WhenTriggerAndIsPullActivityCallBuildTests()
+        {
+            _buildService.Setup(z => z.Build(It.IsAny<Job>(), It.IsAny<cicd.domain.context.trigger.entity.Branch>()));
+            int jobs = SetupGetSettingsWithRandomNumberOfJobs();
+
+            //request = new RequestPayload(RequestTrigger.Push, testInfrastructure.GitHubPushContent);
+
+            DoSutTrigger(testInfrastructure.GitHubPullRequest);
+
+            _buildService.Verify(z => z.Build(It.IsAny<Job>(), It.IsAny<cicd.domain.context.trigger.entity.Branch>()), Times.Exactly(jobs));
+        }
+
+        private void DoSutTrigger(GitHubPullRequest pull_request = null)
+        {
+            var sut = getCICDService();
+            var testRequest = request;
+            testRequest.Branch =
+                cicd.domain.context.trigger.entity.Branch.CreateFrom(testInfrastructure.GitHubPushActivity);
+            testRequest.Activity.pull_request = pull_request;
+            var res = sut.trigger(testRequest);
+        }
+
+        private int SetupGetSettingsWithRandomNumberOfJobs()
+        {
+            IList<Job> listOfJobs = RandomNumberOfPushJobs();
+            _versionControlService.Setup(z => z.GetSettings(It.IsAny<cicd.domain.context.trigger.entity.Branch>()))
+                .Returns(new Settings()
+                {
+                    Jobs = listOfJobs
+                });
+            return listOfJobs.Count;
+        }
+
+        [Test]
+        public void WhenTriggerAndIsPullActivitySetPullRequestState()
+        {
+            base.setup();
+            int listOfJobsCount = SetupGetSettingsWithRandomNumberOfJobs();
+            _versionControlService.Setup(z => z.SetPullRequestStatus(It.IsAny<cicd.domain.context.trigger.entity.Branch>(), It.IsAny<NewCommitStatus>()));
+
+            //request = new RequestPayload(RequestTrigger.Push, testInfrastructure.GitHubPushContent);
+            DoSutTrigger(testInfrastructure.GitHubPullRequest);
+
+            _versionControlService.Verify(z => z.SetPullRequestStatus(It.IsAny<cicd.domain.context.trigger.entity.Branch>(), It.IsAny<NewCommitStatus>()), Times.Exactly(listOfJobsCount));
+        }
+        [Test]
+        public void WhenTriggerAndRequestIsNullReturnJobWithException()
+        {
           CICDService sut = getCICDService();
           var res = sut.trigger(null);
 
-          Assert.IsFalse(res.LastExecution.isSuccessful);
+          Assert.IsFalse(res.LastExecution.IsSuccessful);
           Assert.IsTrue(res.LastExecution.Messages.Count > 0);
-        }
-        [Test]
-        public void WhenRepoReturnsJobWithExceptionDontBuild()
-        {
-            string id = "testID";
-            _jobRepo.Setup(z => z.getJobBy(It.IsAny<string>()))
-                .Returns(testInfrastructure.getJob(false));
-            _buildService.Setup(z => z.build(It.IsAny<Job>(), It.IsAny<pushactivity>()));
-
-            CICDService sut = getCICDService();
-            var res = sut.trigger(request);
-
-            _buildService.Verify(z => z.build(It.IsAny<Job>(),It.IsAny<pushactivity>()), Times.Never());
-        }
-        [Test, Ignore]
-        public void WhenCallingRunReturnInvalidResultIfPayloadStringNullOrEmpty()
-        {
-          CICDService sut = getCICDService();
-          RequestPayload rqPayload = new RequestPayload(RequestTrigger.Branch
-            , testInfrastructure.GitHubPushContent);
-
-          IDomainResult ppayload = sut.run(rqPayload);
-
-          Assert.IsTrue((ppayload as FailedRequest) != null);
         }
         [Test]
         public void CallingRunAndRequestPayloadIsNullReturnNullResult()
@@ -113,10 +159,6 @@ namespace api.louisukiri.com.Tests.service
         [Test]
         public void CallingRunAndFailedJobReturnFailedRequest()
         {
-          DomainRequest validRes = new DomainRequest();
-          _requestFactory.Setup(z => z.getRequestFrom(It.IsAny<RequestPayload>()))
-            .Returns(validRes);
-
           Mock<CICDService> mockSut = getCICDServiceMock();
           mockSut.Setup(z => z.trigger(It.IsAny<RequestPayload>()))
             .Returns(testInfrastructure.getJob(false));
@@ -128,10 +170,6 @@ namespace api.louisukiri.com.Tests.service
         [Test]
         public void CallingRunAndSuccessfulJobReturnsSuccessfulRequest()
         {
-          DomainRequest validRes = new DomainRequest();
-          _requestFactory.Setup(z => z.getRequestFrom(It.IsAny<RequestPayload>()))
-            .Returns(validRes);
-
           Mock<CICDService> mockSut = getCICDServiceMock();
           mockSut.Setup(z => z.trigger(It.IsAny<RequestPayload>()))
             .Returns(testInfrastructure.getJob(true));
@@ -140,15 +178,54 @@ namespace api.louisukiri.com.Tests.service
           var res = sut.run(testInfrastructure.getRequestPayload());
           Assert.IsInstanceOf<SuccessfulRequest>(res);
         }
+
       #region private members
-        private Mock<CICDService> getCICDServiceMock()
-        {
-          return new Mock<CICDService>(_jobRepo.Object, _buildService.Object, _requestFactory.Object);
-        }
-        private CICDService getCICDService()
-        {
-            return new CICDService(_jobRepo.Object, _buildService.Object, _requestFactory.Object);
-        }
+
       #endregion
     }
+    #region cicdAppServiceTestBase
+
+    public class cicdAppServiceTestBase
+    {
+        protected Mock<IJobRepo> _jobRepo;
+        protected Mock<IBuildService> _buildService;
+        protected Mock<IVcActionService> _vcService;
+        protected Mock<IVersionControlService> _versionControlService;
+        protected Mock<IVcSettingsService> _vcSetting;
+        protected Mock<IBot> BotMock;
+
+        public RequestPayload request
+        {
+            get { return new RequestPayload(RequestTrigger.Push, testInfrastructure.GitHubPushContent); }
+        }
+
+        public TestdataPayload testdata
+        {
+            get { return new TestdataPayload(testInfrastructure.TestdataContent);}
+        }
+
+        public void setup()
+        {
+            _jobRepo = new Mock<IJobRepo>();
+            _buildService = new Mock<IBuildService>();
+            _vcService = new Mock<IVcActionService>();
+            _versionControlService = new Mock<IVersionControlService>();
+            _vcSetting = new Mock<IVcSettingsService>();
+            BotMock = new Mock<IBot>();
+        }
+        protected Mock<CICDService> getCICDServiceMock()
+        {
+            return new Mock<CICDService>(_jobRepo.Object, _buildService.Object, _versionControlService.Object, BotMock.Object);
+        }
+        protected CICDService getCICDService()
+        {
+            return getCICDService(_jobRepo.Object, _buildService.Object,
+                _versionControlService.Object, BotMock.Object);
+        }
+        protected CICDService getCICDService(IJobRepo jobRepo,IBuildService buildService, IVersionControlService versionControllerService, IBot comBot)
+        {
+            return new CICDService(jobRepo, buildService, versionControllerService, comBot);
+        }
+    }
+#endregion
 }
