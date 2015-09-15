@@ -20,7 +20,7 @@ namespace api.louisukiri.com.Tests
             Assert.AreEqual(HttpStatusCode.OK, resp.StatusCode);
         }
         [Test]
-        public void selectPushActionGivenPushPayload()
+        public void ConnectingToPushSelectPushGivenValidPushPayload()
         {
             var server = new virtualServer();
             var response = new HttpResponseMessage();
@@ -29,14 +29,25 @@ namespace api.louisukiri.com.Tests
             req.Content = new StringContent(testInfrastructure.GitHubPushContent);
             req.Content.Headers.Clear();
             req.Content.Headers.Add("content-type", "application/json");
- 
+
             Type t = server.ControllerType(req, out response);
 
             Assert.AreEqual(t, typeof(TriggersController));
-            //Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        }
+        [Test]
+        public void ConnectingToPushReturn404GivenInvalidPushPayload()
+        {
+            var server = new virtualServer();
+            var response = new HttpResponseMessage();
+            var req = server.getRequestMessageWithPartialUri("/v1/push");
+            req.Method = HttpMethod.Post;
+            req.Content = new StringContent(testInfrastructure.GitHubPushContent);
+            req.Content.Headers.Clear();
+            req.Content.Headers.Add("content-type", "application/json");
 
-            //Assert.AreEqual("", response.Content.ReadAsStringAsync().Result);
+            Type t = server.ControllerType(req, out response);
 
+            Assert.AreEqual(t, typeof(TriggersController));
         }
         [Test, Ignore, Category("Integrated Test")]
         public void pushIntegratedTest()
@@ -56,7 +67,7 @@ namespace api.louisukiri.com.Tests
 
         }
         [Test]
-        public void returnNotFoundWhenMissingPushContent()
+        public void ConnectionToPushReturn404WhenMissingPushContent()
         {
             var server = new virtualServer();
             var response = new HttpResponseMessage();
